@@ -7,9 +7,12 @@
 #include "psbutton.h"
 #include "usbmode.h"
 #include "fastinput.h"
+#include "identity.h"
+#include "touchzones.h"
+#include "ui.h"
 
-#define REMAP_DIR "ux0:data/VitaPad"
-#define REMAP_FILE REMAP_DIR "/remap.txt"
+#define REMAP_DIR APP_DATA_DIR
+#define REMAP_FILE REMAP_DIR "/settings.txt"
 
 typedef struct {
 	const char *name;
@@ -91,6 +94,14 @@ void remap_load(void){
 				if (strcmp(eq + 1, ps_mode_id(m)) == 0) ps_set_mode(m);
 			continue;
 		}
+		if (strcmp(line, "FrontTouch") == 0){
+			touchzones_set_owns_front(strcmp(eq + 1, "Forward") != 0);
+			continue;
+		}
+		if (strcmp(line, "Mirror") == 0){
+			ui_set_mirror_enabled(strcmp(eq + 1, "Off") != 0);
+			continue;
+		}
 		int src = find(sources, SOURCES_NUM, line);
 		int dst = find(targets, TARGETS_NUM, eq + 1);
 		if (src >= 0 && dst >= 0) mapping[src] = dst;
@@ -107,6 +118,8 @@ static void remap_save(void){
 	fprintf(f, "PSButton=%s\n", ps_mode_id(ps_mode()));
 	fprintf(f, "FastButtons=%s\n", fast_enabled() ? "On" : "Off");
 	fprintf(f, "Connection=%s\n", usb_connection_id(usb_connection()));
+	fprintf(f, "FrontTouch=%s\n", touchzones_owns_front() ? "Zones" : "Forward");
+	fprintf(f, "Mirror=%s\n", ui_mirror_enabled() ? "On" : "Off");
 	fclose(f);
 }
 

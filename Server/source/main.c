@@ -20,6 +20,8 @@
 #include "usbmode.h"
 #include "inputrate.h"
 #include "fastinput.h"
+#include "touchzones.h"
+#include "ui.h"
 
 #define NET_INIT_SIZE 1*1024*1024
 
@@ -78,11 +80,12 @@ static void fill_touch(TouchPoint *out, const SceTouchReport *report, const SceT
 	out->reserved = 0;
 }
 
-static void fill_packet(PadPacket *pkg){
+static void fill_packet(PadPacket *pkg, ZoneLatch *latch){
 	SceCtrlData pad;
 	SceTouchData front, retro;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
-	sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1);
+	// A failed read must not turn stack garbage into zone presses
+	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) memset(&front, 0, sizeof(front));
 	sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1);
 	input_rate_poll(pad.timeStamp);
 	// While the remap menu is open the PC gets a neutral pad
@@ -93,10 +96,16 @@ static void fill_packet(PadPacket *pkg){
 	}
 	memcpy(pkg, &pad.buttons, 8); // Buttons + analogs state
 	pkg->buttons = remap_buttons(fast_apply(pad.buttons));
-	pkg->tx = front.report[0].x;
-	pkg->ty = front.report[0].y;
 	uint8_t flags = NO_INPUT;
-	if (front.reportNum > 0) flags += MOUSE_MOV;
+	if (touchzones_owns_front()){
+		// The Vita owns the front panel: zones become buttons and no touch reaches the PC
+		pkg->buttons |= touchzones_buttons(&front, latch);
+		pkg->tx = pkg->ty = 0;
+	}else{
+		pkg->tx = front.report[0].x;
+		pkg->ty = front.report[0].y;
+		if (front.reportNum > 0) flags += MOUSE_MOV;
+	}
 	if (retro.reportNum > 0){
 		if (retro.report[0].x > 960) flags += RIGHT_CLICK;
 		else flags += LEFT_CLICK;
@@ -105,12 +114,13 @@ static void fill_packet(PadPacket *pkg){
 }
 
 // Returns the timestamp of the buttons/sticks sample used
-static uint64_t fill_packet_v2(PadPacketV2 *pkg){
+static uint64_t fill_packet_v2(PadPacketV2 *pkg, ZoneLatch *latch){
 	SceCtrlData pad;
 	SceTouchData front, retro;
 	SceMotionSensorState motion;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
-	sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1);
+	// A failed read must not turn stack garbage into zone presses
+	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) memset(&front, 0, sizeof(front));
 	sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1);
 	memset(pkg, 0, sizeof(PadPacketV2));
 	pkg->timestamp = (uint32_t)sceKernelGetProcessTimeWide();
@@ -125,7 +135,11 @@ static uint64_t fill_packet_v2(PadPacketV2 *pkg){
 	pkg->ly = pad.ly;
 	pkg->rx = pad.rx;
 	pkg->ry = pad.ry;
-	pkg->front_num = front.reportNum > 2 ? 2 : front.reportNum;
+	if (touchzones_owns_front()){
+		// The Vita owns the front panel: zones become buttons and no point is sent (front_num stays 0
+		// from the memset), so no client setting can map them a second time
+		pkg->buttons |= touchzones_buttons(&front, latch);
+	}else pkg->front_num = front.reportNum > 2 ? 2 : front.reportNum;
 	pkg->rear_num = retro.reportNum > 2 ? 2 : retro.reportNum;
 	for (int i = 0; i < pkg->front_num; i++) fill_touch(&pkg->front[i], &front.report[i], &panel_info[SCE_TOUCH_PORT_FRONT]);
 	for (int i = 0; i < pkg->rear_num; i++) fill_touch(&pkg->rear[i], &retro.report[i], &panel_info[SCE_TOUCH_PORT_BACK]);
@@ -151,14 +165,16 @@ static void handle_client(int client){
 	char request[REQUEST_SIZE];
 	PadPacket pkg;
 	PadPacketV2 pkg_v2;
+	ZoneLatch latch;
+	zones_latch_reset(&latch);
 	for (;;){
 		if (recv_all(client, request, REQUEST_SIZE) < 0) break;
 		int ret;
 		if (memcmp(request, REQUEST_V2, REQUEST_SIZE) == 0){
-			input_rate_poll(fill_packet_v2(&pkg_v2));
+			input_rate_poll(fill_packet_v2(&pkg_v2, &latch));
 			ret = send_all(client, &pkg_v2, sizeof(PadPacketV2));
 		}else{
-			fill_packet(&pkg);
+			fill_packet(&pkg, &latch);
 			ret = send_all(client, &pkg, sizeof(PadPacket));
 		}
 		if (ret < 0) break;
@@ -226,6 +242,8 @@ static int stream_thread(unsigned int args, void* argp){
 		memset(&last, 0, sizeof(last));
 		memset(&packet, 0, sizeof(packet));
 		memcpy(packet.magic, STREAM_MAGIC, 4);
+		ZoneLatch latch;
+		zones_latch_reset(&latch);
 		for (;;){
 			// Hellos: who to stream to, and whether they still want it
 			SceNetSockaddrIn from;
@@ -251,7 +269,7 @@ static int stream_thread(unsigned int args, void* argp){
 			// Anything new? Buttons (fast buttons included), sticks, touch and motion all end up in the packet;
 			// the timestamp always changes so it isn't compared
 			PadPacketV2 pkg;
-			fill_packet_v2(&pkg);
+			fill_packet_v2(&pkg, &latch);
 			uint32_t timestamp = pkg.timestamp;
 			pkg.timestamp = last.timestamp;
 			int changed = memcmp(&pkg, &last, sizeof(pkg)) != 0;
@@ -315,6 +333,7 @@ int main(){
 	sceTouchGetPanelInfo(SCE_TOUCH_PORT_FRONT, &panel_info[SCE_TOUCH_PORT_FRONT]);
 	sceTouchGetPanelInfo(SCE_TOUCH_PORT_BACK, &panel_info[SCE_TOUCH_PORT_BACK]);
 	sceMotionStartSampling();
+	touchzones_init();
 	remap_load();
 	ps_init();
 	usb_init();
@@ -324,7 +343,7 @@ int main(){
 	vita2d_init();
 	vita2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0xFF));
 	debug_font = vita2d_load_default_pgf();
-	uint32_t text_color = RGBA8(0xFF, 0xFF, 0xFF, 0xFF);
+	ui_init(debug_font);
 
 	// Initializing network stuffs
 	sceSysmoduleLoadModule(SCE_SYSMODULE_NET);
@@ -385,6 +404,7 @@ int main(){
 		ps_update();
 
 		fast_update();
+		ui_update(&pad, has_ip ? vita_ip : NULL, connected, battery, screen_off);
 
 		vita2d_start_drawing();
 		vita2d_clear_screen();
@@ -392,49 +412,12 @@ int main(){
 			remap_menu_draw(debug_font);
 		}
 		// With the screen off we draw a plain black frame: OLED pixels are off, so no burn-in
-		else if (!screen_off){
-			vita2d_pgf_draw_text(debug_font, 2, 20, text_color, 1.0, "VitaPad v.1.9 by Rinnegatamante");
-			if (has_ip) vita2d_pgf_draw_textf(debug_font, 2, 60, text_color, 1.0, "Listening on:\nIP: %s\nPort: %d", vita_ip, GAMEPAD_PORT);
-			else vita2d_pgf_draw_text(debug_font, 2, 60, text_color, 1.0, "Waiting for Wi-Fi connection...");
-			vita2d_pgf_draw_textf(debug_font, 2, 200, text_color, 1.0, "Status: %s", connected ? "Connected!" : "Waiting connection...");
-			const char *usb_kind = usb_connection() == CONNECTION_USB_GENERIC ? "standard gamepad" : "DualShock 4";
-			switch (usb_state()){
-			case USB_STATE_CONNECTED: vita2d_pgf_draw_textf(debug_font, 2, 220, text_color, 1.0, "USB mode: connected, the computer sees a %s", usb_kind); break;
-			case USB_STATE_WAITING: vita2d_pgf_draw_textf(debug_font, 2, 220, text_color, 1.0, "USB mode (%s): plug the Vita into a computer with a USB cable", usb_kind); break;
-			default: if (usb_connection() != CONNECTION_WIFI) vita2d_pgf_draw_textf(debug_font, 2, 220, text_color, 1.0, "USB mode (%s): starting...", usb_kind); break;
-			}
-			vita2d_pgf_draw_text(debug_font, 2, 240, text_color, 1.0, "Hold L + R + SELECT for 1 second to turn the screen off/on");
-			vita2d_pgf_draw_textf(debug_font, 2, 260, text_color, 1.0, "Hold L + R + START for 1 second to remap buttons (%d remapped)", remap_changed_count());
-			if (!ps_available()) vita2d_pgf_draw_text(debug_font, 2, 280, text_color, 1.0, "PS button: normal (enable Unsafe Homebrew in HENkaku settings to send it to the PC)");
-			else if (ps_mode() == PS_MODE_DOUBLE_TAP) vita2d_pgf_draw_text(debug_font, 2, 280, text_color, 1.0, "PS button: sent to the PC. Double-tap it for the LiveArea");
-			else if (ps_mode() == PS_MODE_HOLD) vita2d_pgf_draw_text(debug_font, 2, 280, text_color, 1.0, "PS button: sent to the PC. Hold it for the LiveArea");
-			else vita2d_pgf_draw_text(debug_font, 2, 280, text_color, 1.0, "PS button: normal (change it in the remap menu)");
-			vita2d_pgf_draw_textf(debug_font, 2, 300, text_color, 1.0, "Thanks to MakiseKurisu & yuntiancherry for the ViGEm client support");
-			vita2d_pgf_draw_textf(debug_font, 2, 320, text_color, 1.0, "Thanks to Evengard for the vJoy client support");
-			vita2d_pgf_draw_textf(debug_font, 2, 340, text_color, 1.0, "Thanks to nyorem for the Linux client port");
-			vita2d_pgf_draw_textf(debug_font, 2, 360, text_color, 1.0, "Thanks to TheOfficialFloW (Adrenaline) for the PS button technique");
-			vita2d_pgf_draw_textf(debug_font, 2, 380, text_color, 1.0, "Thanks to my distinguished Patroners for their awesome support:");
-			vita2d_pgf_draw_textf(debug_font, 2, 400, text_color, 1.0, "@Sarkies_Proxy - ArkSource - Freddy Parra");
-			vita2d_pgf_draw_textf(debug_font, 2, 420, text_color, 1.0, "RaveHeart - Tain Sueiras - drd7of14 - psymu");
-			vita2d_pgf_draw_textf(debug_font, 2, 440, text_color, 1.0, "The Vita3K project - nullobject - polytoad");
-			InputRates rates;
-			input_rate_get(&rates);
-			vita2d_pgf_draw_textf(debug_font, 2, 480, text_color, 1.0, "Input updates/s: buttons & sticks %d, touch %d, motion %d", rates.ctrl, rates.touch, rates.motion);
-			if (rates.streamed) vita2d_pgf_draw_textf(debug_font, 2, 500, text_color, 1.0, "Streaming to the PC: %d packets/s (UDP)", rates.streamed);
-			else if (connected) vita2d_pgf_draw_textf(debug_font, 2, 500, text_color, 1.0, "PC polls/s: %d (%d with new button & stick data)", rates.polls, rates.fresh);
-			FastButtonsStats fast;
-			if (fast_stats(&fast)){
-				const int y = 520;
-				if (!fast_enabled()) vita2d_pgf_draw_text(debug_font, 2, y, text_color, 1.0, "Fast buttons: off (change it in the remap menu)");
-				else if (!fast.available) vita2d_pgf_draw_text(debug_font, 2, y, text_color, 1.0, "Fast buttons: unavailable on this firmware");
-				else if (!fast.running || fast.learned < 12) vita2d_pgf_draw_text(debug_font, 2, y, text_color, 1.0, "Fast buttons: starting...");
-				else vita2d_pgf_draw_textf(debug_font, 2, y, text_color, 1.0, "Fast buttons: %.1f ms sooner (%d changes), %d reads/s of %d us (max %d), %d fallbacks",
-					fast.avg_us / 1000.0f, fast.matched, fast.reads_per_s, fast.read_us, fast.read_max_us, fast.fallbacks);
-			}
-		}
+		else if (!screen_off) ui_draw();
 		vita2d_end_drawing();
 		vita2d_wait_rendering_done();
+		ui_frame_rendered();
 		vita2d_swap_buffers();
+		ui_frame_swapped();
 
 	}
 

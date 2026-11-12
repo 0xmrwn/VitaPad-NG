@@ -1,0 +1,8 @@
+# Touch zones for a PCH-1000, from the thumb sweep of 2026-11-12.
+# Neither thumb reaches screen x 415..560 (touch units 830..1120), so the stats zone sits inside that strip.
+# Copy to ux0:data/VitaPadNG/zones.txt and restart the app. Units: 1920x1088 touch space.
+Stats ellipse 960 544 110 240
+L1 rect 0 0 960 544
+R1 rect 960 0 1920 544
+L3 rect 0 544 960 1088
+R3 rect 960 544 1920 1088

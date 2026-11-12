@@ -1,0 +1,232 @@
+{
+ "atlas": [
+  1024,
+  616
+ ],
+ "canvas": [
+  960,
+  544
+ ],
+ "sprites": [
+  {
+   "id": "spr-body",
+   "enum": "SPR_BODY",
+   "ax": 2,
+   "ay": 2,
+   "w": 774,
+   "h": 485,
+   "sx": 93,
+   "sy": 28
+  },
+  {
+   "id": "spr-stick-l-cap",
+   "enum": "SPR_STICK_L_CAP",
+   "ax": 194,
+   "ay": 491,
+   "w": 92,
+   "h": 93,
+   "sx": 310,
+   "sy": 233
+  },
+  {
+   "id": "spr-stick-r-cap",
+   "enum": "SPR_STICK_R_CAP",
+   "ax": 290,
+   "ay": 491,
+   "w": 92,
+   "h": 93,
+   "sx": 558,
+   "sy": 233
+  },
+  {
+   "id": "spr-lit-l2",
+   "enum": "SPR_LIT_L2",
+   "ax": 2,
+   "ay": 588,
+   "w": 102,
+   "h": 20,
+   "sx": 193,
+   "sy": 28
+  },
+  {
+   "id": "spr-lit-r2",
+   "enum": "SPR_LIT_R2",
+   "ax": 108,
+   "ay": 588,
+   "w": 102,
+   "h": 20,
+   "sx": 665,
+   "sy": 28
+  },
+  {
+   "id": "spr-lit-l1",
+   "enum": "SPR_LIT_L1",
+   "ax": 214,
+   "ay": 588,
+   "w": 130,
+   "h": 16,
+   "sx": 186,
+   "sy": 44
+  },
+  {
+   "id": "spr-lit-r1",
+   "enum": "SPR_LIT_R1",
+   "ax": 348,
+   "ay": 588,
+   "w": 130,
+   "h": 16,
+   "sx": 644,
+   "sy": 44
+  },
+  {
+   "id": "spr-lit-share",
+   "enum": "SPR_LIT_SHARE",
+   "ax": 894,
+   "ay": 491,
+   "w": 25,
+   "h": 42,
+   "sx": 308,
+   "sy": 73
+  },
+  {
+   "id": "spr-lit-options",
+   "enum": "SPR_LIT_OPTIONS",
+   "ax": 865,
+   "ay": 491,
+   "w": 25,
+   "h": 42,
+   "sx": 627,
+   "sy": 73
+  },
+  {
+   "id": "spr-lit-dpad-up",
+   "enum": "SPR_LIT_DPAD_UP",
+   "ax": 709,
+   "ay": 491,
+   "w": 44,
+   "h": 50,
+   "sx": 216,
+   "sy": 109
+  },
+  {
+   "id": "spr-lit-dpad-right",
+   "enum": "SPR_LIT_DPAD_RIGHT",
+   "ax": 811,
+   "ay": 491,
+   "w": 50,
+   "h": 44,
+   "sx": 252,
+   "sy": 151
+  },
+  {
+   "id": "spr-lit-dpad-down",
+   "enum": "SPR_LIT_DPAD_DOWN",
+   "ax": 661,
+   "ay": 491,
+   "w": 44,
+   "h": 50,
+   "sx": 216,
+   "sy": 187
+  },
+  {
+   "id": "spr-lit-dpad-left",
+   "enum": "SPR_LIT_DPAD_LEFT",
+   "ax": 757,
+   "ay": 491,
+   "w": 50,
+   "h": 44,
+   "sx": 174,
+   "sy": 151
+  },
+  {
+   "id": "spr-lit-triangle",
+   "enum": "SPR_LIT_TRIANGLE",
+   "ax": 552,
+   "ay": 491,
+   "w": 51,
+   "h": 50,
+   "sx": 696,
+   "sy": 90
+  },
+  {
+   "id": "spr-lit-circle",
+   "enum": "SPR_LIT_CIRCLE",
+   "ax": 607,
+   "ay": 491,
+   "w": 50,
+   "h": 50,
+   "sx": 754,
+   "sy": 147
+  },
+  {
+   "id": "spr-lit-cross",
+   "enum": "SPR_LIT_CROSS",
+   "ax": 442,
+   "ay": 491,
+   "w": 51,
+   "h": 50,
+   "sx": 696,
+   "sy": 204
+  },
+  {
+   "id": "spr-lit-square",
+   "enum": "SPR_LIT_SQUARE",
+   "ax": 497,
+   "ay": 491,
+   "w": 51,
+   "h": 50,
+   "sx": 639,
+   "sy": 147
+  },
+  {
+   "id": "spr-lit-ps",
+   "enum": "SPR_LIT_PS",
+   "ax": 386,
+   "ay": 491,
+   "w": 52,
+   "h": 52,
+   "sx": 454,
+   "sy": 258
+  },
+  {
+   "id": "spr-lit-stick-l-ring",
+   "enum": "SPR_LIT_STICK_L_RING",
+   "ax": 780,
+   "ay": 2,
+   "w": 109,
+   "h": 109,
+   "sx": 301,
+   "sy": 225
+  },
+  {
+   "id": "spr-lit-stick-r-ring",
+   "enum": "SPR_LIT_STICK_R_RING",
+   "ax": 893,
+   "ay": 2,
+   "w": 109,
+   "h": 109,
+   "sx": 550,
+   "sy": 225
+  },
+  {
+   "id": "spr-lit-stick-l-cap",
+   "enum": "SPR_LIT_STICK_L_CAP",
+   "ax": 2,
+   "ay": 491,
+   "w": 92,
+   "h": 93,
+   "sx": 310,
+   "sy": 233
+  },
+  {
+   "id": "spr-lit-stick-r-cap",
+   "enum": "SPR_LIT_STICK_R_CAP",
+   "ax": 98,
+   "ay": 491,
+   "w": 92,
+   "h": 93,
+   "sx": 558,
+   "sy": 233
+  }
+ ]
+}

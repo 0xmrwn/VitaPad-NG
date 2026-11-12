@@ -1,0 +1,784 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1480" height="940" viewBox="130 50 740 470"
+     role="img" aria-labelledby="title description">
+  <title id="title">DualShock 4 · Jet Black</title>
+  <desc id="description">Front view of the PlayStation 4 controller, with a graphite shell, blue light strip, and the four colored PlayStation buttons.</desc>
+
+  <!-- Visual reference: Sony Interactive Entertainment, DualShock 4 Jet Black.
+       https://www.playstation.com/en-us/accessories/dualshock-4-wireless-controller/ -->
+  <defs>
+    <path id="shell-shape" d="
+      M250 92
+      C275 88.4 320 87.5 337 90
+      C347 91.5 347.5 96 357 97.3
+      C370 99 381 99.5 392 99.5
+      H608
+      C619 99.5 630 99 643 97.3
+      C652.5 96 653 91.5 663 90
+      C680 87.5 725 88.4 750 92
+      C754 92.6 754.8 98.1 760 105.6
+      C780 134.6 791 157.6 799 188
+      C808.3 223.3 818.7 269.7 826 312
+      C833.4 355 835.7 395.8 829.4 429.1
+      C823.4 461 805.4 482.5 783.3 489
+      C752.3 498.1 722.6 486.4 702.7 462.8
+      C681.7 437.9 668.6 395.5 658.6 363.9
+      C654.4 350.6 651 345.7 644 343.9
+      C634.8 352.6 621.4 359.7 607 359.7
+      C587.1 359.7 570.8 352.5 558.4 341.8
+      H441.6
+      C429.2 352.5 412.9 359.7 393 359.7
+      C378.6 359.7 365.2 352.6 356 343.9
+      C349 345.7 345.6 350.6 341.4 363.9
+      C331.4 395.5 318.3 437.9 297.3 462.8
+      C277.4 486.4 247.7 498.1 216.7 489
+      C194.6 482.5 176.6 461 170.6 429.1
+      C164.3 395.8 166.6 355 174 312
+      C181.3 269.7 191.7 223.3 201 188
+      C209 157.6 220 134.6 240 105.6
+      C245.2 98.1 246 92.6 250 92 Z"/>
+    <clipPath id="shell-clip">
+      <use xlink:href="#shell-shape"/>
+    </clipPath>
+
+    <!-- Molded shell and its reflections -->
+    <linearGradient id="shell-color" x1="380" y1="88" x2="475" y2="492" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#454951"/>
+      <stop offset=".27" stop-color="#373b43"/>
+      <stop offset=".53" stop-color="#252a32"/>
+      <stop offset=".78" stop-color="#242931"/>
+      <stop offset="1" stop-color="#181c23"/>
+    </linearGradient>
+    <linearGradient id="shell-edge" x1="230" y1="80" x2="696" y2="509" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a4acb8" stop-opacity=".70"/>
+      <stop offset=".28" stop-color="#a9b1be" stop-opacity=".40"/>
+      <stop offset=".55" stop-color="#99a7be" stop-opacity=".12"/>
+      <stop offset=".78" stop-color="#78859b" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#8a97ad" stop-opacity=".42"/>
+    </linearGradient>
+    <linearGradient id="shell-side-shade">
+      <stop stop-color="#070a0f" stop-opacity=".66"/>
+      <stop offset=".10" stop-color="#070a0f" stop-opacity="0"/>
+      <stop offset=".88" stop-color="#080b11" stop-opacity="0"/>
+      <stop offset=".965" stop-color="#080b11" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#080b11" stop-opacity=".67"/>
+    </linearGradient>
+    <radialGradient id="shoulder-light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(313 102) rotate(13) scale(65 36)">
+      <stop stop-color="#b9c3d2" stop-opacity=".38"/>
+      <stop offset=".43" stop-color="#a1adbf" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#a1adbf" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="left-grip-light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(211 319) rotate(13) scale(60 130)">
+      <stop stop-color="#98a9bf" stop-opacity=".34"/>
+      <stop offset=".37" stop-color="#899ab1" stop-opacity=".22"/>
+      <stop offset=".72" stop-color="#7f91a8" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#7f91a8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="right-grip-light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(784 321) rotate(-14) scale(58 127)">
+      <stop stop-color="#9ba8bf" stop-opacity=".26"/>
+      <stop offset=".40" stop-color="#8e9bb4" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#7a8ca8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="grip-bounce" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(302 411) rotate(22) scale(37 109)">
+      <stop stop-color="#a0abc0" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#7f92b0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bridge-shade" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(500 347) scale(170 116)">
+      <stop stop-color="#070a10" stop-opacity=".85"/>
+      <stop offset=".52" stop-color="#080b11" stop-opacity=".53"/>
+      <stop offset="1" stop-color="#080b11" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="plastic-grain" width="43" height="39" patternUnits="userSpaceOnUse">
+    <g fill="none" stroke-linecap="round">
+      <path d="M17.69 21.08h.04 M7.18 20.02h.04 M3.72 32.38h.04 M26.73 37.2h.04 M28.74 31.44h.04 M35.28 24.42h.04 M15.07 31.55h.04
+             M27.62 21.13h.04 M8.13 24.87h.04 M26.77 7.91h.04 M22.01 33.26h.04 M3.68 10.16h.04 M4.16 34.67h.04 M24 3.4h.04
+             M34.12 15.05h.04 M13.63 20.85h.04 M13.5 5.48h.04 M34.75 1.26h.04 M39.24 6.59h.04 M6.86 10.58h.04 M37.78 18.46h.04
+             M2.03 10.94h.04 M27.25 25.71h.04 M25.31 11.67h.04 M40 3.4h.04 M14.49 9.28h.04 M26.96 22.44h.04 M39.25 37.72h.04
+             M29.68 1.65h.04 M14.39 2.13h.04 M32.45 27.55h.04 M14.23 11.01h.04 M38.92 22.09h.04 M3.9 2.38h.04 M23.42 0.65h.04
+             M4.23 11.94h.04 M24.7 9.64h.04 M3.91 26.84h.04 M19.17 32.1h.04 M33.78 37.77h.04 M5.78 26.85h.04 M6.42 4.55h.04"
+            stroke="#d8e0eb" stroke-opacity="0.14" stroke-width="0.46"/>
+      <path d="M36.6 7.31h.04 M41.91 26.8h.04 M26.39 4.87h.04 M2.11 15.2h.04 M18.85 2.08h.04 M25.25 21.03h.04 M35.65 2.29h.04
+             M42.13 14.1h.04 M12.9 24.98h.04 M35.7 31.97h.04 M20.99 11.36h.04 M39.99 25.43h.04 M32.79 11.15h.04 M6.47 36.23h.04
+             M40.79 28.64h.04 M8.49 1.24h.04 M39.02 24.47h.04 M33.83 5.07h.04 M18.54 36.16h.04 M17.52 30.69h.04 M16.41 17.9h.04
+             M39.97 17.13h.04 M14.17 27.43h.04 M27.85 29.23h.04 M16.62 6.76h.04 M37.5 20.76h.04 M18.75 26.76h.04 M22.87 4.9h.04
+             M29.68 15.73h.04 M14.26 24.55h.04 M28.1 36.94h.04 M41.48 21.72h.04 M6.66 34.91h.04 M17.36 24.58h.04 M11.41 7.66h.04
+             M17.75 29.09h.04 M36.49 11.39h.04 M2.55 5.41h.04 M12.64 29h.04 M34.49 32.49h.04 M5.38 32.17h.04 M35.2 16.35h.04"
+            stroke="#aebbc9" stroke-opacity="0.12" stroke-width="0.68"/>
+      <path d="M10.04 1.75h.04 M16.43 15.92h.04 M3.57 4.22h.04 M20.55 35.22h.04 M30.41 28.44h.04 M10.38 17.83h.04 M7.21 9.06h.04
+             M8.95 4.85h.04 M11.99 0.9h.04 M12.3 36.88h.04 M13.15 15.85h.04 M3.75 17.3h.04 M22.89 31.77h.04 M11.08 9.39h.04
+             M29.29 17.58h.04 M5.68 15.4h.04 M28.96 26.63h.04 M1.32 3.49h.04 M37.66 31.8h.04 M28.17 7.13h.04 M34.1 11.15h.04
+             M0.84 30.9h.04 M37.16 13.46h.04 M14.85 25.81h.04 M11.45 34.21h.04 M1.9 1.04h.04 M16.86 35.6h.04 M34.52 20.85h.04
+             M8.68 22.09h.04 M23.07 22.81h.04 M12.68 23.23h.04 M33.11 9.71h.04 M13.21 35.46h.04 M15.27 36.61h.04 M27.48 17.99h.04
+             M5.48 24.55h.04 M29.45 36.84h.04 M39.49 19.89h.04 M6.99 22.87h.04 M28.58 9.29h.04 M11.52 35.65h.04 M12.51 10h.04"
+            stroke="#080a0e" stroke-opacity="0.28" stroke-width="0.74"/>
+      <path d="M5.51 0.98h.04 M29.48 12.94h.04 M40.64 4.71h.04 M8.51 10.39h.04 M27.9 13.04h.04 M33.76 26.43h.04 M1.26 29.06h.04
+             M25.95 2.88h.04 M12.07 26.6h.04 M11.6 3.1h.04 M23.46 36.2h.04 M27.8 35.03h.04 M10.79 27.09h.04 M13.96 12.92h.04
+             M31.33 0.84h.04 M21.56 24.71h.04 M14.07 23.03h.04 M24.1 32.99h.04 M11 11h.04 M8.1 17.64h.04 M8.71 32.2h.04
+             M13.23 7.16h.04 M21.38 0.86h.04 M33.91 18.64h.04 M22.78 14.14h.04 M33.87 29.91h.04 M25.29 26.02h.04 M4.21 19.92h.04
+             M18.45 16.52h.04 M7.29 2.23h.04 M21.08 9.66h.04 M35.71 27.28h.04 M23.56 15.73h.04 M1.14 6.62h.04 M41.85 36.53h.04
+             M16.47 29.86h.04 M41.15 6.18h.04 M9.25 14.68h.04 M18.68 22.88h.04 M9.29 3.35h.04 M41.39 31.21h.04"
+            stroke="#0a0c11" stroke-opacity="0.32" stroke-width="0.49"/>
+    </g>
+    </pattern>
+
+    <linearGradient id="grip-end-color" x1="182" y1="401" x2="298" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#404650"/>
+      <stop offset=".48" stop-color="#242931"/>
+      <stop offset=".81" stop-color="#181b22"/>
+      <stop offset="1" stop-color="#101319"/>
+    </linearGradient>
+    <linearGradient id="grip-seam-light" x1="168" y1="410" x2="308" y2="442" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7b8492" stop-opacity=".43"/>
+      <stop offset=".54" stop-color="#616c7c" stop-opacity=".21"/>
+      <stop offset="1" stop-color="#697685" stop-opacity=".10"/>
+    </linearGradient>
+    <g id="grip-end">
+      <path d="M163 393 C169 418 196 438 233 445 C258 450 285 447 312 437 L327 504 H157Z"
+            fill="url(#grip-end-color)"/>
+      <path d="M163 393 C169 418 196 438 233 445 C258 450 285 447 312 437 L327 504 H157Z"
+            fill="url(#plastic-grain)" opacity=".83"/>
+      <path d="M163 393 C169 418 196 438 233 445 C258 450 285 447 312 437"
+            fill="none" stroke="#0b0e14" stroke-opacity=".72" stroke-width="1.15"/>
+      <path d="M163 394.4 C169 419.4 196 439.4 233 446.4 C258 451.4 285 448.4 312 438.4"
+            fill="none" stroke="url(#grip-seam-light)" stroke-width=".9"/>
+    </g>
+
+    <!-- Trigger caps behind the front shell -->
+    <linearGradient id="trigger-wall" x1="252" y1="0" x2="341" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1d222a"/>
+      <stop offset=".10" stop-color="#808792"/>
+      <stop offset=".18" stop-color="#4b525d"/>
+      <stop offset=".36" stop-color="#373d47"/>
+      <stop offset=".70" stop-color="#464d57"/>
+      <stop offset=".88" stop-color="#6d7580"/>
+      <stop offset="1" stop-color="#20242c"/>
+    </linearGradient>
+    <linearGradient id="trigger-top" x2="0" y2="1">
+      <stop stop-color="#777e89"/>
+      <stop offset=".33" stop-color="#505762"/>
+      <stop offset="1" stop-color="#3a3f48"/>
+    </linearGradient>
+    <g id="trigger">
+      <path d="M252.5 96 L253.6 86.6 C254.1 81.9 274.4 75.4 291.6 75.4
+               C309.5 74.1 329.5 79 336 84.2 C338.4 86.2 338.9 91.6 340 96Z"
+            fill="url(#trigger-wall)" stroke="#171b21" stroke-width="1.35"/>
+      <path d="M254.8 86.1 C258 81 277 76 291.7 76 C308.2 74.9 326.4 79.1 334.7 84.1
+               C323.7 80.8 311.2 80 299.1 80.1 C282.2 80 266.4 83 254.8 86.1Z"
+            fill="url(#trigger-top)"/>
+      <path d="M259 82.8 C276.4 74.4 306.4 72.7 328.7 81.5"
+            fill="none" stroke="#bfc8d3" stroke-opacity=".39" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- Touch pad -->
+    <path id="touchpad-face" d="M400 119 H600 Q607.5 119 607.5 126 V207
+           Q607.5 218 597 218 H403 Q392.5 218 392.5 207 V126 Q392.5 119 400 119Z"/>
+    <linearGradient id="touchpad-case" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#606671"/>
+      <stop offset=".17" stop-color="#292d35"/>
+      <stop offset=".4" stop-color="#4a5059"/>
+      <stop offset=".84" stop-color="#343942"/>
+      <stop offset="1" stop-color="#12151c"/>
+    </linearGradient>
+    <linearGradient id="touchpad-lip" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#22262e"/>
+      <stop offset=".21" stop-color="#5a606b"/>
+      <stop offset=".43" stop-color="#525863"/>
+      <stop offset=".73" stop-color="#333842"/>
+      <stop offset="1" stop-color="#11151c"/>
+    </linearGradient>
+    <radialGradient id="touchpad-surface" cx=".40" cy=".10" r=".94" gradientTransform="translate(0 .04) scale(1 .85)">
+      <stop stop-color="#2c3039"/>
+      <stop offset=".55" stop-color="#22262e"/>
+      <stop offset="1" stop-color="#14171e"/>
+    </radialGradient>
+    <linearGradient id="touchpad-reflection" x1="392" y1="110" x2="392" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ccd5e3" stop-opacity=".10"/>
+      <stop offset=".24" stop-color="#aab6ca" stop-opacity=".68"/>
+      <stop offset=".73" stop-color="#9ca8bc" stop-opacity=".39"/>
+      <stop offset="1" stop-color="#818ba1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="touchpad-dots-fade" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="white" stop-opacity=".79"/>
+      <stop offset=".56" stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity=".57"/>
+    </linearGradient>
+    <mask id="touchpad-dots-mask">
+      <use xlink:href="#touchpad-face" fill="url(#touchpad-dots-fade)"/>
+    </mask>
+    <pattern id="touchpad-dots" width="5.38" height="5.38" patternUnits="userSpaceOnUse" x="394.1" y="120.5">
+      <circle cx="2.69" cy="3.03" r="1.07" fill="#0b0e15" opacity=".76"/>
+      <path d="M1.84 2.68a.87.87 0 0 1 1.7 0" fill="none" stroke="#748093" stroke-opacity=".49" stroke-width=".6"/>
+      <circle cx="2.51" cy="2.48" r=".34" fill="#626d7e" opacity=".55"/>
+    </pattern>
+    <linearGradient id="light-strip" x1="408" y1="0" x2="592" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1d3cb8" stop-opacity="0"/>
+      <stop offset=".12" stop-color="#4268f7" stop-opacity=".83"/>
+      <stop offset=".39" stop-color="#80b0ff"/>
+      <stop offset=".61" stop-color="#8fc9ff"/>
+      <stop offset=".90" stop-color="#3d70fb" stop-opacity=".87"/>
+      <stop offset="1" stop-color="#2946c2" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="light-reflection" cx=".5" cy=".5" r=".5">
+      <stop stop-color="#4271ff" stop-opacity=".69"/>
+      <stop offset=".35" stop-color="#3c63ff" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#3559ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Circular control plates, face buttons, and directional keys -->
+    <radialGradient id="plate-shadow">
+      <stop offset=".78" stop-color="#070a10" stop-opacity=".70"/>
+      <stop offset=".88" stop-color="#070a10" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#070a10" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="plate-surface" cx=".27" cy=".11" r=".98">
+      <stop stop-color="#515660"/>
+      <stop offset=".53" stop-color="#363a42"/>
+      <stop offset="1" stop-color="#292d35"/>
+    </radialGradient>
+    <linearGradient id="plate-edge" x1=".21" y1="0" x2=".64" y2="1">
+      <stop stop-color="#838b99" stop-opacity=".52"/>
+      <stop offset=".41" stop-color="#687482" stop-opacity=".12"/>
+      <stop offset=".84" stop-color="#0a0d14" stop-opacity=".49"/>
+      <stop offset="1" stop-color="#080b11" stop-opacity=".77"/>
+    </linearGradient>
+    <g id="control-plate">
+      <circle cy="5" r="87" fill="url(#plate-shadow)"/>
+      <circle r="79.4" fill="url(#plate-surface)" stroke="url(#plate-edge)" stroke-width="1.05"/>
+      <circle r="78.5" fill="url(#plastic-grain)" opacity=".38"/>
+    </g>
+
+    <linearGradient id="button-seat" x1=".25" y1="0" x2=".63" y2="1">
+      <stop stop-color="#13171e"/>
+      <stop offset=".42" stop-color="#080b11"/>
+      <stop offset=".81" stop-color="#191e26"/>
+      <stop offset="1" stop-color="#545b66"/>
+    </linearGradient>
+    <linearGradient id="button-side" x2="0" y2="1">
+      <stop stop-color="#2b3039"/>
+      <stop offset=".67" stop-color="#292e37"/>
+      <stop offset="1" stop-color="#141820"/>
+    </linearGradient>
+    <linearGradient id="button-face" x1=".26" y1="0" x2=".73" y2="1">
+      <stop stop-color="#555b65"/>
+      <stop offset=".37" stop-color="#444951"/>
+      <stop offset="1" stop-color="#353942"/>
+    </linearGradient>
+    <linearGradient id="button-bevel" x1=".21" y1="0" x2=".71" y2="1">
+      <stop stop-color="#9ba4b2" stop-opacity=".68"/>
+      <stop offset=".52" stop-color="#707988" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#161a22" stop-opacity=".85"/>
+    </linearGradient>
+    <g id="face-button">
+      <circle cy="1.5" r="26.3" fill="url(#plate-shadow)" opacity=".66"/>
+      <circle r="24.05" fill="url(#button-seat)"/>
+      <circle cy=".08" r="22.38" fill="url(#button-side)" stroke="#0c0f15" stroke-width=".72"/>
+      <circle cx="-.14" cy="-.9" r="21" fill="url(#button-face)" stroke="url(#button-bevel)" stroke-width=".86"/>
+      <path d="M-18.9-7.3 A20.2 20.2 0 0 1 .5-21"
+            fill="none" stroke="#c3ccd8" stroke-opacity=".16" stroke-width=".65" stroke-linecap="round"/>
+    </g>
+    <linearGradient id="triangle-ink" x2="0" y2="1">
+      <stop stop-color="#9ce5d9"/>
+      <stop offset="1" stop-color="#62bdb3"/>
+    </linearGradient>
+    <linearGradient id="circle-ink" x2="0" y2="1">
+      <stop stop-color="#f4aaa6"/>
+      <stop offset="1" stop-color="#d28385"/>
+    </linearGradient>
+    <linearGradient id="cross-ink" x2="0" y2="1">
+      <stop stop-color="#b8d4fa"/>
+      <stop offset="1" stop-color="#89a9db"/>
+    </linearGradient>
+    <linearGradient id="square-ink" x2="0" y2="1">
+      <stop stop-color="#e3b7db"/>
+      <stop offset="1" stop-color="#bd8dbb"/>
+    </linearGradient>
+
+    <path id="dpad-key-well" d="M-13.5-57 C-6-58.6 6-58.6 13.5-57
+           Q21-55.5 21.2-47.2 L19.9-32.7 Q19.2-25.1 13.9-20
+           L5.4-11.9 Q0-6.2-5.4-11.9 L-13.9-20 Q-19.2-25.1-19.9-32.7
+           L-21.2-47.2 Q-21-55.5-13.5-57Z"/>
+    <path id="dpad-key-face" d="M-12.6-53.5 C-6-54.9 6-54.9 12.6-53.5
+           Q17.6-52.6 17.9-46.9 L16.6-32.9 Q16-26.5 11.6-22.3
+           L3.3-14.5 Q0-11.1-3.3-14.5 L-11.6-22.3 Q-16-26.5-16.6-32.9
+           L-17.9-46.9 Q-17.6-52.6-12.6-53.5Z"/>
+    <linearGradient id="dpad-plastic" x1=".19" y1=".18" x2=".81" y2=".98">
+      <stop stop-color="#4b505a"/>
+      <stop offset=".46" stop-color="#3a3e47"/>
+      <stop offset=".83" stop-color="#343941"/>
+      <stop offset="1" stop-color="#2b3039"/>
+    </linearGradient>
+    <linearGradient id="dpad-bevel" x1=".33" y1="0" x2=".64" y2="1">
+      <stop stop-color="#98a1af" stop-opacity=".74"/>
+      <stop offset=".39" stop-color="#707a89" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#9eaaba" stop-opacity=".13"/>
+    </linearGradient>
+    <linearGradient id="direction-mark" x2="0" y2="1">
+      <stop stop-color="#777e89" stop-opacity=".39"/>
+      <stop offset="1" stop-color="#666f7d" stop-opacity=".25"/>
+    </linearGradient>
+    <g id="dpad-key">
+      <path d="M-9.6-63.9 L0-74 L9.6-63.9Z" fill="url(#direction-mark)"/>
+      <use xlink:href="#dpad-key-well" fill="url(#button-seat)" stroke="#606974" stroke-opacity=".44" stroke-width=".8"/>
+      <use xlink:href="#dpad-key-well" transform="translate(0 -.5) scale(.918 .958)"
+           fill="url(#button-side)" stroke="#070a0f" stroke-width=".86"/>
+      <use xlink:href="#dpad-key-face" fill="url(#dpad-plastic)" stroke="url(#dpad-bevel)" stroke-width="1.12"/>
+    </g>
+
+    <!-- Twin analog assemblies -->
+    <radialGradient id="stick-housing" cx="0" cy="0" r="119" fx="-22" fy="-29" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#656c78"/>
+      <stop offset=".32" stop-color="#4a505a"/>
+      <stop offset=".66" stop-color="#272d36"/>
+      <stop offset="1" stop-color="#171c23"/>
+    </radialGradient>
+    <linearGradient id="stick-housing-edge" x1=".23" y1=".01" x2=".69" y2="1">
+      <stop stop-color="#8b96a7" stop-opacity=".30"/>
+      <stop offset=".43" stop-color="#646f80" stop-opacity=".06"/>
+      <stop offset=".84" stop-color="#070a10" stop-opacity=".47"/>
+      <stop offset="1" stop-color="#576170" stop-opacity=".55"/>
+    </linearGradient>
+    <linearGradient id="stick-wall" x1=".28" y1="0" x2=".67" y2="1">
+      <stop stop-color="#585f6a"/>
+      <stop offset=".47" stop-color="#363c46"/>
+      <stop offset=".78" stop-color="#282d36"/>
+      <stop offset="1" stop-color="#20242c"/>
+    </linearGradient>
+    <linearGradient id="stick-lip" x1=".20" y1="0" x2=".76" y2="1">
+      <stop stop-color="#787f8a"/>
+      <stop offset=".25" stop-color="#636a75"/>
+      <stop offset=".54" stop-color="#454b56"/>
+      <stop offset=".80" stop-color="#525963"/>
+      <stop offset="1" stop-color="#333942"/>
+    </linearGradient>
+    <linearGradient id="stick-dish" x1=".44" y1="0" x2=".57" y2="1">
+      <stop stop-color="#272b32"/>
+      <stop offset=".22" stop-color="#373b43"/>
+      <stop offset=".56" stop-color="#383d45"/>
+      <stop offset=".88" stop-color="#494f59"/>
+      <stop offset="1" stop-color="#555c67"/>
+    </linearGradient>
+    <linearGradient id="stick-dish-edge" x2="0" y2="1">
+      <stop stop-color="#242932"/>
+      <stop offset=".55" stop-color="#414752"/>
+      <stop offset="1" stop-color="#747e8c"/>
+    </linearGradient>
+    <pattern id="rubber-grain" width="37" height="34" patternUnits="userSpaceOnUse">
+    <g fill="none" stroke-linecap="round">
+      <path d="M26.08 28.11h.04 M16.41 28.96h.04 M12.32 10.64h.04 M29.89 33.09h.04 M18.69 33.26h.04 M9.59 6.72h.04 M19.89 19.5h.04
+             M10.02 18.41h.04 M1.34 15.78h.04 M2.51 31.21h.04 M25.79 8.98h.04 M9.55 10.69h.04 M12.82 25.49h.04 M27.37 8.44h.04
+             M34.66 17.29h.04 M11.43 26.3h.04 M32.26 17.55h.04 M17.91 0.8h.04 M7.83 6.37h.04 M23.77 18.2h.04 M5.21 5.9h.04
+             M16.15 17.12h.04 M7.31 18.08h.04 M4.74 1.72h.04 M5.69 19.49h.04 M21.27 20.03h.04 M24.59 18.96h.04 M1.58 24.25h.04
+             M9.33 15.09h.04 M33.1 13.74h.04 M30.4 29.24h.04 M23.64 9.92h.04 M29.08 1.51h.04 M11.88 12.55h.04 M31.45 22.43h.04
+             M23.74 23.57h.04 M26.41 16.39h.04 M21.3 18.85h.04 M32.22 28.87h.04 M22.63 25.93h.04 M9.9 4.73h.04 M11.18 9.05h.04
+             M10.35 17.03h.04 M25.59 3.08h.04 M17.22 31.7h.04 M20.94 24.82h.04 M33.99 15.09h.04 M31.74 3.97h.04 M17.31 26.44h.04"
+            stroke="#bcc4d0" stroke-opacity="0.26" stroke-width="0.59"/>
+      <path d="M7.17 33.29h.04 M35.92 4.43h.04 M20 12.65h.04 M31.34 9.36h.04 M27.96 18.05h.04 M21.15 14.86h.04 M15.27 13.6h.04
+             M25.36 14.36h.04 M3.08 26.31h.04 M20.53 23.56h.04 M24 15.48h.04 M27.34 20.54h.04 M25.25 5.74h.04 M12.39 8.41h.04
+             M12.53 3.44h.04 M30.35 19.72h.04 M22.46 23.78h.04 M18.83 16.53h.04 M15.68 32.5h.04 M27.95 0.76h.04 M24.07 14.46h.04
+             M26.33 17.7h.04 M11 5.13h.04 M35.67 14.3h.04 M33.51 30.26h.04 M4.97 12.28h.04 M26.39 32.64h.04 M21.62 21.72h.04
+             M34.88 22.83h.04 M36.18 12.14h.04 M30.77 14.54h.04 M6.24 16.29h.04 M22.13 1.32h.04 M4.47 8.38h.04 M14.97 15.38h.04
+             M17.96 20.75h.04 M12.72 0.89h.04 M30.26 4.78h.04 M36.12 32.61h.04 M22.88 10.89h.04 M7.26 11.01h.04 M16.49 3.58h.04
+             M6.09 26.43h.04 M17.65 33.25h.04 M28.68 27.55h.04 M27.64 21.85h.04 M24.43 17h.04 M26.74 22.43h.04 M6.73 3.5h.04"
+            stroke="#a5b0c0" stroke-opacity="0.29" stroke-width="0.76"/>
+      <path d="M7.58 22.59h.04 M19.1 31.98h.04 M32.55 30.89h.04 M27.17 30.89h.04 M9.31 21.28h.04 M13.91 2.54h.04 M8.53 10.56h.04
+             M23.24 30.25h.04 M30.82 17.97h.04 M28.99 4.05h.04 M35.98 28.32h.04 M34.42 8.41h.04 M2.3 6.32h.04 M34.41 18.69h.04
+             M16.51 30.9h.04 M13.48 7.05h.04 M6.25 17.64h.04 M33.12 24.5h.04 M9.74 16.19h.04 M19.54 20.84h.04 M8.91 30.95h.04
+             M10.49 24.25h.04 M30.87 25.81h.04 M19.27 29.47h.04 M32.31 33.11h.04 M19.01 25.33h.04 M14.36 30.91h.04 M24.76 3.82h.04
+             M7.89 30.59h.04 M17.5 8.88h.04 M9.93 30.26h.04 M34.4 20.47h.04 M28.74 19.94h.04 M1.04 9.27h.04 M14.89 12.1h.04
+             M16.14 5.38h.04 M6.73 9.11h.04 M4.58 20h.04 M21.49 28.67h.04 M3.77 2.23h.04 M19.81 5.47h.04 M18.17 29.93h.04
+             M14.97 30.01h.04 M30.56 3.38h.04 M13.4 27.69h.04 M4.71 31.08h.04 M16.53 7.49h.04 M11.06 30.9h.04 M14.66 20.36h.04"
+            stroke="#909bac" stroke-opacity="0.23" stroke-width="0.46"/>
+      <path d="M3.93 25.43h.04 M27.04 15.18h.04 M11.94 29.91h.04 M3.99 16.82h.04 M23.81 13.44h.04 M16.75 10.87h.04 M11.14 11.64h.04
+             M10.2 13.14h.04 M32.76 7.62h.04 M7.18 5.25h.04 M30.38 11.81h.04 M10.31 2.7h.04 M29.82 24.62h.04 M23.23 19.25h.04
+             M13.4 15.32h.04 M25.77 23.1h.04 M6.5 28.34h.04 M4.07 21.5h.04 M19.91 10.68h.04 M28.44 30.3h.04 M22.84 31.88h.04
+             M5.16 24.33h.04 M30.96 32.54h.04 M14.56 5.84h.04 M9.72 22.53h.04 M24.93 21.62h.04 M15.01 2.26h.04 M32.15 25.64h.04
+             M31.96 13.84h.04 M3.56 4.96h.04 M2.98 10.36h.04 M14.81 3.77h.04 M6.11 1.04h.04 M21.82 32.73h.04 M9.86 26.58h.04
+             M26.61 7.49h.04 M26.25 10.46h.04 M36.01 9.29h.04 M13.33 26.54h.04 M18.58 27.67h.04 M26.6 19.81h.04 M4.89 7.13h.04
+             M31.09 26.94h.04 M13.89 1.25h.04 M31.96 15.95h.04 M13.89 9.07h.04 M0.93 21.07h.04 M2.55 24.66h.04 M19.05 8.46h.04"
+            stroke="#0b0e13" stroke-opacity="0.38" stroke-width="0.78"/>
+      <path d="M6.05 23.75h.04 M11.52 31.81h.04 M3.14 3.82h.04 M6.16 5.33h.04 M29.02 13.85h.04 M16.67 25.63h.04 M33.04 26.76h.04
+             M27.79 11.07h.04 M16.56 6.39h.04 M18.65 3.22h.04 M5.35 32.28h.04 M8.29 32.72h.04 M8.73 8.31h.04 M33.92 12.57h.04
+             M20.8 8.43h.04 M8.28 5.27h.04 M5.73 20.62h.04 M7.05 20.41h.04 M17.43 24.82h.04 M21.2 6.26h.04 M28.32 7.22h.04
+             M29.07 5.29h.04 M34.51 28.22h.04 M5.87 10.37h.04 M21.92 30.48h.04 M26.02 12.19h.04 M5.31 15.75h.04 M8.78 24.28h.04
+             M0.68 22.46h.04 M2.76 15.55h.04 M31.07 21.2h.04 M30.59 1.44h.04 M23.04 2.76h.04 M5.87 30.97h.04 M24.14 6.32h.04
+             M9.91 12.18h.04 M33.34 8.43h.04 M27.77 6.2h.04 M2.7 16.61h.04 M24.88 23.63h.04 M34.53 6.15h.04 M2 2.76h.04
+             M34.53 11.69h.04 M26.49 27.13h.04 M28.74 2.44h.04 M16.96 21.03h.04 M8.44 18.3h.04 M7.05 8.1h.04 M15.97 20.07h.04"
+            stroke="#10141a" stroke-opacity="0.31" stroke-width="0.61"/>
+      <path d="M26.51 25.7h.04 M30.75 5.81h.04 M24.4 26.78h.04 M17.77 22.57h.04 M17.39 27.84h.04 M1.99 33h.04 M23.54 1.21h.04
+             M26.4 13.64h.04 M2.39 27.61h.04 M29.16 16.88h.04 M10.72 29.12h.04 M20.78 16.2h.04 M11.62 22.86h.04 M8.81 27.39h.04
+             M35.18 29.16h.04 M4.72 27.74h.04 M32.48 3.14h.04 M28.01 32.09h.04 M24.47 8.66h.04 M13.85 28.83h.04 M8.78 28.87h.04
+             M0.74 30.54h.04 M22.54 16.92h.04 M0.96 25.39h.04 M6.74 29.64h.04 M12.62 32.63h.04 M36.09 21.33h.04 M33.57 19.26h.04
+             M12.23 4.82h.04 M16.04 23.66h.04 M15.83 12.68h.04 M25.39 6.72h.04 M0.9 28.56h.04 M14.45 10.23h.04 M6.58 13.5h.04
+             M6.39 2.03h.04 M11.33 19.55h.04 M5.15 13.67h.04 M31.87 31.86h.04 M25.41 16.81h.04 M1.3 12.91h.04 M18.16 6.96h.04
+             M35.26 26.85h.04 M14.15 16.85h.04 M14.82 0.77h.04 M36.29 1.05h.04 M25.45 29.66h.04 M2.34 13.09h.04"
+            stroke="#0a0d12" stroke-opacity="0.3" stroke-width="0.49"/>
+    </g>
+    </pattern>
+    <g id="analog-stick-well">
+      <ellipse cx="1" cy="6" rx="68" ry="70" fill="url(#plate-shadow)" opacity=".79"/>
+      <ellipse cy="4.5" rx="60.6" ry="63.8" fill="url(#stick-housing)"
+               stroke="url(#stick-housing-edge)" stroke-width="1.15"/>
+      <ellipse cy="4.5" rx="59.8" ry="63.1" fill="url(#plastic-grain)" opacity=".53"/>
+      <circle cy="-.1" r="42.35" fill="url(#button-seat)" stroke="#080b11" stroke-width="1.15"/>
+    </g>
+    <g id="analog-stick-cap">
+      <circle cy=".6" r="39.3" fill="url(#stick-wall)"/>
+      <circle cy="-1.7" r="37.8" fill="url(#stick-lip)" stroke="url(#button-bevel)" stroke-width="1.1"/>
+      <circle cy="-1.7" r="37.2" fill="url(#rubber-grain)" opacity=".72"/>
+      <circle cy="-1.7" r="35.55" fill="none" stroke="#151a22" stroke-opacity=".34"
+              stroke-width="1.65" stroke-dasharray=".67 1.6"/>
+      <circle cy="-2.2" r="29.05" fill="url(#stick-dish)" stroke="url(#stick-dish-edge)" stroke-width="1.25"/>
+      <circle cy="-2.2" r="28.5" fill="url(#rubber-grain)" opacity=".98"/>
+      <path d="M-32.8-18.3 A36.75 36.75 0 0 1 5.4-38"
+            fill="none" stroke="#aab2be" stroke-opacity=".40" stroke-width=".95" stroke-linecap="round"/>
+      <path d="M-22.6 17.6 A29 29 0 0 0 17.7 21.2"
+            fill="none" stroke="#a4aebc" stroke-opacity=".24" stroke-width=".9" stroke-linecap="round"/>
+    </g>
+
+    <!-- Center buttons and molded lettering -->
+    <g id="menu-button">
+      <rect x="-12" y="-20" width="24" height="40" rx="11.4" fill="url(#button-seat)" stroke="#a8b0bc"
+            stroke-opacity=".24" stroke-width=".68"/>
+      <rect x="-10.15" y="-18.35" width="20.3" height="36.7" rx="9.8" fill="url(#button-side)"/>
+      <rect x="-9.55" y="-18.65" width="19.1" height="34.6" rx="9.25" fill="url(#button-face)"
+            stroke="url(#button-bevel)" stroke-width="1"/>
+    </g>
+    <linearGradient id="speaker-rim" x2="0" y2="1">
+      <stop stop-color="#15191f"/>
+      <stop offset="1" stop-color="#49515e"/>
+    </linearGradient>
+    <g id="speaker-hole">
+      <circle r="3.46" fill="url(#speaker-rim)"/>
+      <circle cy="-.23" r="2.76" fill="#090c12"/>
+    </g>
+    <radialGradient id="ps-button-face" cx=".32" cy=".13" r=".98">
+      <stop stop-color="#4b515c"/>
+      <stop offset=".43" stop-color="#22262e"/>
+      <stop offset=".81" stop-color="#11151b"/>
+      <stop offset="1" stop-color="#20252e"/>
+    </radialGradient>
+    <linearGradient id="ps-mark" x2="0" y2="1">
+      <stop stop-color="#f2f4f8"/>
+      <stop offset=".64" stop-color="#dce1eb"/>
+      <stop offset="1" stop-color="#b8c0cd"/>
+    </linearGradient>
+    <g id="ps-button-art">
+      <circle cy="1.2" r="21" fill="url(#plate-shadow)" opacity=".81"/>
+      <circle r="19.3" fill="url(#button-seat)"/>
+      <circle cy="-.45" r="17.05" fill="url(#ps-button-face)" stroke="#090c12" stroke-width="1"/>
+      <path d="M-14.2-7.5A16.1 16.1 0 0 1 8.8-13.9" fill="none" stroke="#b8c3d2"
+            stroke-opacity=".43" stroke-width="1" stroke-linecap="round"/>
+      <path d="M-4.5-10.65 C-.92-10.08 3.62-8.64 5.64-7.47
+               C7.82-6.22 8.52-4.56 8.52-2.21 C8.52.44 6.77 1.46 4.1.24
+               V-4.91 C4.1-6.1 3.66-6.67 2.83-6.92 C1.93-7.18 1.61-6.61 1.61-5.75
+               V10.44 L-4.5 8.48Z
+               M-5.55 1.85 L-10.8 3.7 C-14.04 4.86-13.51 6.53-10.74 7.51
+               C-9.05 8.09-7.25 8.34-5.55 8.28 V6.41
+               C-6.96 6.59-8.64 6.36-9.34 6.05 C-10.19 5.68-9.94 5.19-8.62 4.73
+               L-5.55 3.67Z
+               M2.56 2.46 C5.53 1.45 9.86 1.64 12.42 2.69 C14.79 3.65 14.19 5.01 12.06 5.77
+               L2.56 9.15 V7.25 L9.86 4.68 C11.05 4.23 10.85 3.79 9.83 3.57
+               C8.83 3.34 7.48 3.5 6.42 3.87 L2.56 5.19Z"
+            transform="translate(-.5 -.35) scale(.92)" fill="url(#ps-mark)"/>
+    </g>
+
+    <!-- Lit (pressed) states: the same parts, softly lit in cool blue-grey -->
+    <linearGradient id="lit-face" x1=".26" y1="0" x2=".73" y2="1">
+      <stop stop-color="#3b5479"/>
+      <stop offset=".42" stop-color="#2a3d5a"/>
+      <stop offset="1" stop-color="#1b283c"/>
+    </linearGradient>
+    <linearGradient id="lit-bevel" x1=".21" y1="0" x2=".71" y2="1">
+      <stop stop-color="#93b2de"/>
+      <stop offset=".5" stop-color="#6f93c8"/>
+      <stop offset="1" stop-color="#3f5b86"/>
+    </linearGradient>
+    <linearGradient id="lit-trigger-wall" x1="252" y1="0" x2="341" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#172234"/>
+      <stop offset=".10" stop-color="#5a79a6"/>
+      <stop offset=".18" stop-color="#34496b"/>
+      <stop offset=".36" stop-color="#283a56"/>
+      <stop offset=".70" stop-color="#2f4362"/>
+      <stop offset=".88" stop-color="#4c6890"/>
+      <stop offset="1" stop-color="#182335"/>
+    </linearGradient>
+    <linearGradient id="lit-trigger-top" x2="0" y2="1">
+      <stop stop-color="#6283b2"/>
+      <stop offset=".33" stop-color="#3f5779"/>
+      <stop offset="1" stop-color="#2c3f5c"/>
+    </linearGradient>
+    <linearGradient id="lit-bumper" x1="0" y1="88" x2="0" y2="99" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#45618c"/>
+      <stop offset=".45" stop-color="#2e4264"/>
+      <stop offset="1" stop-color="#1d2b41"/>
+    </linearGradient>
+    <mask id="lit-outside-shell" maskUnits="userSpaceOnUse" x="200" y="50" width="600" height="60">
+      <rect x="200" y="50" width="600" height="60" fill="white"/>
+      <use xlink:href="#shell-shape" fill="black" stroke="black" stroke-width="1.35"/>
+    </mask>
+    <g id="lit-trigger" mask="url(#lit-outside-shell)">
+      <path d="M252.5 96 L253.6 86.6 C254.1 81.9 274.4 75.4 291.6 75.4
+               C309.5 74.1 329.5 79 336 84.2 C338.4 86.2 338.9 91.6 340 96Z"
+            fill="url(#lit-trigger-wall)" stroke="#6f93c8" stroke-width="1.35"/>
+      <path d="M254.8 86.1 C258 81 277 76 291.7 76 C308.2 74.9 326.4 79.1 334.7 84.1
+               C323.7 80.8 311.2 80 299.1 80.1 C282.2 80 266.4 83 254.8 86.1Z"
+            fill="url(#lit-trigger-top)"/>
+      <path d="M259 82.8 C276.4 74.4 306.4 72.7 328.7 81.5"
+            fill="none" stroke="#a9c1e4" stroke-opacity=".45" stroke-width="1" stroke-linecap="round"/>
+    </g>
+    <g id="lit-bumper-band" clip-path="url(#shell-clip)">
+      <path d="M248.6 90.4 C275 86.4 320 85.5 337 88 C347 89.5 347.5 94 357.6 95.3
+               L357.3 100.6 C348.4 99.6 344.4 97.9 336.2 96.7 C320 94.6 276 95.3 253.2 98.6
+               Q248.4 99.4 247.4 96.6Z"
+            fill="url(#lit-bumper)"/>
+      <path d="M253.2 98.6 C276 95.3 320 94.6 336.2 96.7 C344.4 97.9 348.4 99.6 357.3 100.6"
+            fill="none" stroke="#6f93c8" stroke-opacity=".45" stroke-width=".7" stroke-linecap="round"/>
+      <path d="M247.6 93.6 Q248.6 92.2 250 92 C275 88.4 320 87.5 337 90 C347 91.5 347.5 96 357 97.3"
+            fill="none" stroke="#7c9fd2" stroke-width="2.4" stroke-linecap="round"/>
+    </g>
+    <g id="lit-dpad-key">
+      <use xlink:href="#dpad-key-face" fill="url(#lit-face)" stroke="url(#lit-bevel)" stroke-width="1.12"/>
+      <path d="M-11.3-51.9 C-5.6-53.1 5.6-53.1 11.3-51.9" fill="none" stroke="#a9c1e4" stroke-opacity=".38"
+            stroke-width=".8" stroke-linecap="round"/>
+    </g>
+    <g id="lit-menu-button">
+      <rect x="-9.55" y="-18.65" width="19.1" height="34.6" rx="9.25" fill="url(#lit-face)"
+            stroke="url(#lit-bevel)" stroke-width="1"/>
+      <path d="M-7.6-12.6 A8 8 0 0 1 1.6-17.3" fill="none" stroke="#a9c1e4" stroke-opacity=".38"
+            stroke-width=".7" stroke-linecap="round"/>
+    </g>
+    <g id="lit-face-button">
+      <circle cx="-.14" cy="-.9" r="21" fill="url(#lit-face)" stroke="url(#lit-bevel)" stroke-width="1"/>
+      <path d="M-18.9-7.3 A20.2 20.2 0 0 1 .5-21"
+            fill="none" stroke="#a9c1e4" stroke-opacity=".38" stroke-width=".8" stroke-linecap="round"/>
+    </g>
+    <linearGradient id="lit-stick-wall" x1=".28" y1="0" x2=".67" y2="1">
+      <stop stop-color="#3a5070"/>
+      <stop offset=".47" stop-color="#253650"/>
+      <stop offset=".78" stop-color="#1b2840"/>
+      <stop offset="1" stop-color="#151f30"/>
+    </linearGradient>
+    <linearGradient id="lit-stick-lip" x1=".20" y1="0" x2=".76" y2="1">
+      <stop stop-color="#55729c"/>
+      <stop offset=".25" stop-color="#456089"/>
+      <stop offset=".54" stop-color="#2c4060"/>
+      <stop offset=".80" stop-color="#33486a"/>
+      <stop offset="1" stop-color="#1f2d44"/>
+    </linearGradient>
+    <linearGradient id="lit-stick-dish" x1=".44" y1="0" x2=".57" y2="1">
+      <stop stop-color="#172130"/>
+      <stop offset=".22" stop-color="#202e44"/>
+      <stop offset=".56" stop-color="#233349"/>
+      <stop offset=".88" stop-color="#2d405e"/>
+      <stop offset="1" stop-color="#384f70"/>
+    </linearGradient>
+    <linearGradient id="lit-stick-dish-edge" x2="0" y2="1">
+      <stop stop-color="#172130"/>
+      <stop offset=".55" stop-color="#2e4262"/>
+      <stop offset="1" stop-color="#6f93c8"/>
+    </linearGradient>
+    <g id="lit-stick-cap">
+      <circle cy=".6" r="39.3" fill="url(#lit-stick-wall)"/>
+      <circle cy="-1.7" r="37.8" fill="url(#lit-stick-lip)" stroke="url(#lit-bevel)" stroke-width="1.1"/>
+      <circle cy="-1.7" r="37.2" fill="url(#rubber-grain)" opacity=".5"/>
+      <circle cy="-1.7" r="35.55" fill="none" stroke="#0e1520" stroke-opacity=".4"
+              stroke-width="1.65" stroke-dasharray=".67 1.6"/>
+      <circle cy="-2.2" r="29.05" fill="url(#lit-stick-dish)" stroke="url(#lit-stick-dish-edge)" stroke-width="1.25"/>
+      <circle cy="-2.2" r="28.5" fill="url(#rubber-grain)" opacity=".7"/>
+      <path d="M-32.8-18.3 A36.75 36.75 0 0 1 5.4-38"
+            fill="none" stroke="#a9c1e4" stroke-opacity=".45" stroke-width=".95" stroke-linecap="round"/>
+      <path d="M-22.6 17.6 A29 29 0 0 0 17.7 21.2"
+            fill="none" stroke="#a9c1e4" stroke-opacity=".28" stroke-width=".9" stroke-linecap="round"/>
+    </g>
+    <linearGradient id="lit-ring" x1=".2" y1="0" x2=".75" y2="1">
+      <stop stop-color="#82a3d2"/>
+      <stop offset=".5" stop-color="#6385b8"/>
+      <stop offset="1" stop-color="#38527a"/>
+    </linearGradient>
+  </defs>
+
+  <g id="spr-body">
+    <g id="shoulder-buttons">
+      <use id="trigger-l2" xlink:href="#trigger"/>
+      <use id="trigger-r2" xlink:href="#trigger" transform="translate(1000 0) scale(-1 1)"/>
+    </g>
+
+    <g id="body">
+      <use xlink:href="#shell-shape" fill="url(#shell-color)" stroke="#0b0d13" stroke-width="1.35"/>
+      <g clip-path="url(#shell-clip)">
+        <use xlink:href="#shell-shape" fill="url(#shell-side-shade)"/>
+        <use xlink:href="#shell-shape" fill="url(#left-grip-light)"/>
+        <use xlink:href="#shell-shape" fill="url(#right-grip-light)"/>
+        <use xlink:href="#shell-shape" fill="url(#grip-bounce)"/>
+        <use xlink:href="#shell-shape" fill="url(#grip-bounce)" opacity=".8" transform="translate(1000 0) scale(-1 1)"/>
+        <use xlink:href="#shell-shape" fill="url(#bridge-shade)"/>
+        <use xlink:href="#shell-shape" fill="url(#shoulder-light)"/>
+        <use xlink:href="#shell-shape" fill="url(#shoulder-light)" opacity=".75"
+             transform="translate(1000 0) scale(-1 1)"/>
+        <use xlink:href="#shell-shape" fill="url(#plastic-grain)" opacity=".50"/>
+        <use xlink:href="#grip-end"/>
+        <use xlink:href="#grip-end" transform="translate(1000 0) scale(-1 1)" opacity=".87"/>
+        <use xlink:href="#shell-shape" fill="none" stroke="url(#shell-edge)" stroke-width="5" opacity=".14"/>
+        <use xlink:href="#shell-shape" fill="none" stroke="url(#shell-edge)" stroke-width="2.1"/>
+      </g>
+    </g>
+
+    <g id="touchpad">
+      <path d="M395 95 H605 Q612.8 95 613.6 103.2 L613.2 207 Q613 224 598 224 H402
+               Q387 224 386.8 207 L386.4 103.2 Q387.2 95 395 95Z"
+            fill="#10131a" stroke="#191c23" stroke-width="1.1"/>
+      <path d="M395.4 96.2 H604.6 Q611.3 96.2 611.5 104 L611 207.2 Q611 222 597.5 222 H402.5
+               Q389 222 389 207.2 L388.5 104 Q388.7 96.2 395.4 96.2Z"
+            fill="url(#touchpad-case)"/>
+      <path d="M396.3 97.1 H603.7 Q609 97.1 609 103.5 L608.9 123
+               Q600 117 591.4 117.4 H408.6 Q400 117 391.1 123 L391 103.5 Q391 97.1 396.3 97.1Z"
+            fill="url(#touchpad-lip)"/>
+      <path d="M398 97.65 H602" fill="none" stroke="#b8c2d0" stroke-width=".86" stroke-opacity=".37" stroke-linecap="round"/>
+      <path d="M391 119.6 V206.6 Q391 215.5 396.5 218.6 M609 119.6 V206.6 Q609 215.5 603.5 218.6"
+            fill="none" stroke="url(#touchpad-reflection)" stroke-width="1.5"/>
+      <use xlink:href="#touchpad-face" fill="url(#touchpad-surface)" stroke="#080b11" stroke-width="1.2"/>
+      <use xlink:href="#touchpad-face" fill="url(#touchpad-dots)" mask="url(#touchpad-dots-mask)"/>
+      <ellipse cx="500" cy="117.3" rx="105" ry="8.4" fill="url(#light-reflection)"/>
+      <path d="M402 117.7 Q408 115.6 422 115.6 H578 Q592 115.6 598 117.7
+               Q591 119.2 577 119.2 H423 Q409 119.2 402 117.7Z"
+            fill="url(#light-strip)"/>
+      <path d="M425 116.7 H575" fill="none" stroke="url(#light-strip)" stroke-width=".86" stroke-linecap="round"/>
+      <path d="M403 219.3 H597" fill="none" stroke="#7e8b9d" stroke-opacity=".15" stroke-width="1.1" stroke-linecap="round"/>
+    </g>
+
+    <g id="directional-pad" transform="translate(291 199.6)">
+      <use xlink:href="#control-plate"/>
+      <use id="dpad-up" xlink:href="#dpad-key"/>
+      <use id="dpad-right" xlink:href="#dpad-key" transform="rotate(90)"/>
+      <use id="dpad-down" xlink:href="#dpad-key" transform="rotate(180)"/>
+      <use id="dpad-left" xlink:href="#dpad-key" transform="rotate(270)"/>
+    </g>
+
+    <g id="action-buttons" transform="translate(709 199.6)">
+      <use xlink:href="#control-plate"/>
+      <g id="triangle-button" transform="translate(0 -49.3)">
+        <use xlink:href="#face-button"/>
+        <path d="M0-14.1 L14 10.9 H-14Z" fill="none" stroke="#182729" stroke-opacity=".78" stroke-width="4"
+              stroke-linejoin="round"/>
+        <path d="M0-14.1 L14 10.9 H-14Z" fill="none" stroke="url(#triangle-ink)" stroke-width="2.45" stroke-linejoin="round"/>
+      </g>
+      <g id="circle-button" transform="translate(49.3 0)">
+        <use xlink:href="#face-button"/>
+        <circle r="14.18" fill="none" stroke="#2b1d22" stroke-opacity=".8" stroke-width="4"/>
+        <circle r="14.18" fill="none" stroke="url(#circle-ink)" stroke-width="2.45"/>
+      </g>
+      <g id="cross-button" transform="translate(0 49.3)">
+        <use xlink:href="#face-button"/>
+        <path d="M-11.7-11.7L11.7 11.7 M11.7-11.7L-11.7 11.7" fill="none" stroke="#1e2537"
+              stroke-opacity=".79" stroke-width="3.9" stroke-linecap="round"/>
+        <path d="M-11.7-11.7L11.7 11.7 M11.7-11.7L-11.7 11.7" fill="none" stroke="url(#cross-ink)"
+              stroke-width="2.45" stroke-linecap="round"/>
+      </g>
+      <g id="square-button" transform="translate(-49.3 0)">
+        <use xlink:href="#face-button"/>
+        <rect x="-11.6" y="-11.6" width="23.2" height="23.2" rx=".65" fill="none" stroke="#2d2231"
+              stroke-opacity=".78" stroke-width="4"/>
+        <rect x="-11.6" y="-11.6" width="23.2" height="23.2" rx=".65" fill="none" stroke="url(#square-ink)" stroke-width="2.45"/>
+      </g>
+    </g>
+
+    <g id="share-and-options">
+      <use id="share-button" xlink:href="#menu-button" transform="translate(362.5 132.6) rotate(-1.9)"/>
+      <use id="options-button" xlink:href="#menu-button" transform="translate(637.5 132.6) rotate(1.9)"/>
+      <g fill="none" stroke="#b9bec8" stroke-width=".78" stroke-opacity=".79"
+         stroke-linecap="round" stroke-linejoin="round">
+        <path aria-label="SHARE" transform="translate(347.6 105)" d="
+          M4.6.65 Q3.8 0 2.55 0 Q.35 0 .35 1.47 Q.35 2.52 2.47 3 Q4.65 3.48 4.65 4.7
+          Q4.65 6.18 2.47 6.18 Q1.15 6.18 .2 5.42
+          M6.4 0V6.18 M10.95 0V6.18 M6.4 3.07H10.95
+          M12.5 6.18L15.07 0 17.64 6.18 M13.5 4.05H16.63
+          M19.2 6.18V0H21.72Q23.72 0 23.72 1.72Q23.72 3.43 21.72 3.43H19.2 M21.33 3.43L23.85 6.18
+          M29.9 0H25.7V6.18H30 M25.7 3H29.15"/>
+        <path aria-label="OPTIONS" transform="translate(615.7 105)" d="
+          M2.61 0C.89 0 .17 1.14 .17 3.09S.89 6.18 2.61 6.18 5.05 5.04 5.05 3.09 4.33 0 2.61 0Z
+          M6.9 6.18V0H9.25Q11.3 0 11.3 1.77Q11.3 3.55 9.25 3.55H6.9
+          M12.62 0H17.55 M15.09 0V6.18
+          M19.31 0V6.18
+          M23.65 0C21.93 0 21.21 1.14 21.21 3.09S21.93 6.18 23.65 6.18 26.09 5.04 26.09 3.09 25.37 0 23.65 0Z
+          M27.99 6.18V0L32.68 6.18V0
+          M38.87.65Q38.07 0 36.82 0Q34.62 0 34.62 1.47Q34.62 2.52 36.74 3Q38.92 3.48 38.92 4.7
+          Q38.92 6.18 36.74 6.18Q35.42 6.18 34.47 5.42"/>
+      </g>
+    </g>
+
+    <g id="analog-sticks" clip-path="url(#shell-clip)">
+      <use id="stick-l-well" xlink:href="#analog-stick-well" transform="translate(392.8 291.3)"/>
+      <use id="stick-r-well" xlink:href="#analog-stick-well" transform="translate(607.2 291.3)"/>
+    </g>
+
+    <g id="speaker">
+      <use xlink:href="#speaker-hole" x="476" y="240.6"/>
+      <use xlink:href="#speaker-hole" x="488" y="240.6"/>
+      <use xlink:href="#speaker-hole" x="500" y="240.6"/>
+      <use xlink:href="#speaker-hole" x="512" y="240.6"/>
+      <use xlink:href="#speaker-hole" x="524" y="240.6"/>
+      <use xlink:href="#speaker-hole" x="482" y="249"/>
+      <use xlink:href="#speaker-hole" x="494" y="249"/>
+      <use xlink:href="#speaker-hole" x="506" y="249"/>
+      <use xlink:href="#speaker-hole" x="518" y="249"/>
+      <use xlink:href="#speaker-hole" x="488" y="257.4"/>
+      <use xlink:href="#speaker-hole" x="500" y="257.4"/>
+      <use xlink:href="#speaker-hole" x="512" y="257.4"/>
+    </g>
+
+    <g id="playstation-button" transform="translate(500 295)">
+      <use xlink:href="#ps-button-art"/>
+    </g>
+
+    <g id="connector-edge" clip-path="url(#shell-clip)">
+      <path d="M471 342 Q471.6 336.8 477 335.8 H524 Q528.8 336.7 529 342Z"
+            fill="#13171e" stroke="#4b5260" stroke-opacity=".44" stroke-width=".75"/>
+      <rect x="478.5" y="337.5" width="25.4" height="4.2" rx="1.15" fill="#080a0f"/>
+      <ellipse cx="515.1" cy="339.3" rx="4.8" ry="2" fill="#070a0e" stroke="#626b79" stroke-opacity=".29" stroke-width=".75"/>
+    </g>
+  </g>
+
+  <g id="spr-stick-l-cap" clip-path="url(#shell-clip)"><use xlink:href="#analog-stick-cap" transform="translate(392.8 291.3)"/></g>
+  <g id="spr-stick-r-cap" clip-path="url(#shell-clip)"><use xlink:href="#analog-stick-cap" transform="translate(607.2 291.3)"/></g>
+
+  <g id="spr-lit-l2" display="none"><use xlink:href="#lit-trigger"/></g>
+  <g id="spr-lit-r2" display="none" transform="translate(1000 0) scale(-1 1)"><use xlink:href="#lit-trigger"/></g>
+  <g id="spr-lit-l1" display="none"><use xlink:href="#lit-bumper-band"/></g>
+  <g id="spr-lit-r1" display="none" transform="translate(1000 0) scale(-1 1)"><use xlink:href="#lit-bumper-band"/></g>
+  <g id="spr-lit-share" display="none"><use xlink:href="#lit-menu-button" transform="translate(362.5 132.6) rotate(-1.9)"/></g>
+  <g id="spr-lit-options" display="none"><use xlink:href="#lit-menu-button" transform="translate(637.5 132.6) rotate(1.9)"/></g>
+  <g id="spr-lit-dpad-up" display="none"><use xlink:href="#lit-dpad-key" transform="translate(291 199.6)"/></g>
+  <g id="spr-lit-dpad-right" display="none"><use xlink:href="#lit-dpad-key" transform="translate(291 199.6) rotate(90)"/></g>
+  <g id="spr-lit-dpad-down" display="none"><use xlink:href="#lit-dpad-key" transform="translate(291 199.6) rotate(180)"/></g>
+  <g id="spr-lit-dpad-left" display="none"><use xlink:href="#lit-dpad-key" transform="translate(291 199.6) rotate(270)"/></g>
+  <g id="spr-lit-triangle" display="none" transform="translate(709 150.3)">
+    <use xlink:href="#lit-face-button"/>
+    <path d="M0-14.1 L14 10.9 H-14Z" fill="none" stroke="#0f1a24" stroke-opacity=".7" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M0-14.1 L14 10.9 H-14Z" fill="none" stroke="url(#triangle-ink)" stroke-width="2.45" stroke-linejoin="round"/>
+  </g>
+  <g id="spr-lit-circle" display="none" transform="translate(758.3 199.6)">
+    <use xlink:href="#lit-face-button"/>
+    <circle r="14.18" fill="none" stroke="#1d1824" stroke-opacity=".7" stroke-width="4"/>
+    <circle r="14.18" fill="none" stroke="url(#circle-ink)" stroke-width="2.45"/>
+  </g>
+  <g id="spr-lit-cross" display="none" transform="translate(709 248.9)">
+    <use xlink:href="#lit-face-button"/>
+    <path d="M-11.7-11.7L11.7 11.7 M11.7-11.7L-11.7 11.7" fill="none" stroke="#141c2c" stroke-opacity=".7" stroke-width="3.9" stroke-linecap="round"/>
+    <path d="M-11.7-11.7L11.7 11.7 M11.7-11.7L-11.7 11.7" fill="none" stroke="url(#cross-ink)" stroke-width="2.45" stroke-linecap="round"/>
+  </g>
+  <g id="spr-lit-square" display="none" transform="translate(659.7 199.6)">
+    <use xlink:href="#lit-face-button"/>
+    <rect x="-11.6" y="-11.6" width="23.2" height="23.2" rx=".65" fill="none" stroke="#1f1a28" stroke-opacity=".7" stroke-width="4"/>
+    <rect x="-11.6" y="-11.6" width="23.2" height="23.2" rx=".65" fill="none" stroke="url(#square-ink)" stroke-width="2.45"/>
+  </g>
+  <g id="spr-lit-ps" display="none" transform="translate(500 295)"><circle r="21" fill="none" stroke="url(#lit-ring)" stroke-width="2.4"/><use xlink:href="#ps-button-art"/></g>
+  <g id="spr-lit-stick-l-ring" display="none" transform="translate(392.8 291.3)"><circle cy="-.1" r="45.5" fill="none" stroke="url(#lit-ring)" stroke-width="2.6"/></g>
+  <g id="spr-lit-stick-r-ring" display="none" transform="translate(607.2 291.3)"><circle cy="-.1" r="45.5" fill="none" stroke="url(#lit-ring)" stroke-width="2.6"/></g>
+  <g id="spr-lit-stick-l-cap" display="none"><use xlink:href="#lit-stick-cap" transform="translate(392.8 291.3)"/></g>
+  <g id="spr-lit-stick-r-cap" display="none"><use xlink:href="#lit-stick-cap" transform="translate(607.2 291.3)"/></g>
+</svg>

@@ -10,13 +10,14 @@
 #include <taihen.h>
 
 #include "psbutton.h"
+#include "identity.h"
 
-#define TITLE_ID "VPAD00001"
+#define TITLE_ID APP_TITLE_ID
 // Must match the module name in kernel/exports.yml (it carries the ABI version)
 #define KERNEL_MODULE_NAME "VitaPadKernel5"
 #define KERNEL_MODULE_PATH "ux0:app/" TITLE_ID "/module/vitapad_kernel.skprx"
 // Written right before restarting after loading the module, so a failure can't cause a restart loop
-#define RESTART_FLAG "ux0:data/VitaPad/restarted.flag"
+#define RESTART_FLAG APP_DATA_DIR "/restarted.flag"
 
 // Two presses within this time go back to the LiveArea (like Adrenaline)
 #define DOUBLE_TAP_US (300 * 1000)
@@ -68,7 +69,7 @@ void ps_init(void){
 		if (taiLoadStartKernelModule(KERNEL_MODULE_PATH, 0, NULL, 0) < 0) return;
 		// Our imports of the module only resolve when the app starts: restart
 		sceIoMkdir("ux0:data", 0777);
-		sceIoMkdir("ux0:data/VitaPad", 0777);
+		sceIoMkdir(APP_DATA_DIR, 0777);
 		flag = sceIoOpen(RESTART_FLAG, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
 		if (flag >= 0) sceIoClose(flag);
 		sceAppMgrLoadExec("app0:eboot.bin", NULL, NULL);

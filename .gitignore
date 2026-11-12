@@ -88,3 +88,8 @@ Client/vita_ip.txt
 
 # Vita app CMake build
 Server/out/
+
+Server/tests/out/
+
+# Python caches
+__pycache__/

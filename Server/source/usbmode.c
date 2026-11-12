@@ -11,6 +11,7 @@
 #include "remap.h"
 #include "usb.h"
 #include "fastinput.h"
+#include "touchzones.h"
 
 // From the kernel module (weak imports: resolved only once the module is loaded)
 int vitapadKernelUsbStart(int mode);
@@ -30,6 +31,8 @@ int vitapadKernelUsbGetState(void);
 
 static volatile int connection = CONNECTION_WIFI;
 static SceTouchPanelInfo rear_panel;
+// Only the USB thread uses it (read_input)
+static ZoneLatch zone_latch;
 
 // Everything read from the Vita for one report
 typedef struct {
@@ -39,20 +42,6 @@ typedef struct {
 	int rear_num;           // Rear touch fingers (DS4 touchpad)
 	int rear_x[2], rear_y[2], rear_id[2];
 } Input;
-
-// Front touchscreen corners act as the buttons the Vita lacks, like the ViGEm default
-static uint16_t touch_buttons(void){
-	SceTouchData touch;
-	uint16_t buttons = 0;
-	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &touch, 1) < 0) return 0;
-	for (int i = 0; i < (int)touch.reportNum && i < 2; i++){
-		int left = touch.report[i].x < 960;
-		int top = touch.report[i].y < 544;
-		if (top) buttons |= left ? USB_BTN_L1 : USB_BTN_R1;
-		else buttons |= left ? USB_BTN_L3 : USB_BTN_R3;
-	}
-	return buttons;
-}
 
 static uint8_t hat(uint32_t buttons){
 	int up = buttons & SCE_CTRL_UP, down = buttons & SCE_CTRL_DOWN;
@@ -85,10 +74,12 @@ static int read_input(Input *in){
 
 	SceCtrlData pad;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
-	in->buttons = remap_buttons(fast_apply(pad.buttons)) | ps_buttons();
+	SceTouchData front;
+	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) front.reportNum = 0;
+	// Front touch zones, the same table as Wi-Fi (USB has no client to forward touches to)
+	in->buttons = remap_buttons(fast_apply(pad.buttons)) | ps_buttons() | touchzones_buttons(&front, &zone_latch);
 	for (int i = 0; i < (int)(sizeof(map) / sizeof(map[0])); i++)
 		if (in->buttons & map[i].vita) in->usb_buttons |= map[i].usb;
-	in->usb_buttons |= touch_buttons();
 	in->lx = pad.lx;
 	in->ly = pad.ly;
 	in->rx = pad.rx;

@@ -1,0 +1,13 @@
+setup_wifi
+setup_no_wifi
+setup_usb_waiting
+setup_cross_l1
+setup_half_faded
+play_rest
+play_all
+play_sticks
+play_l3
+play_hint
+play_summary
+play_mirror_off
+diag
