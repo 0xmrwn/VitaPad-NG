@@ -31,6 +31,17 @@ void zones_default(ZoneTable *table){
 	set_zone(&table->zones[4], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_R3, TOUCH_WIDTH / 2, TOUCH_HEIGHT / 2, TOUCH_WIDTH, TOUCH_HEIGHT);
 }
 
+void zones_default_rear(ZoneTable *table){
+	memset(table, 0, sizeof(*table));
+	table->count = 4;
+	// Fingers gripping the Vita rest on x 0..450 and x 1469..1919 all the time, so only the inner columns
+	// count, with a dead gap between them. Coordinates are as seen from the front: no mirroring needed
+	set_zone(&table->zones[0], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_L1, 451, 0, 941, TOUCH_HEIGHT / 2);
+	set_zone(&table->zones[1], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_L3, 451, TOUCH_HEIGHT / 2, 941, TOUCH_HEIGHT);
+	set_zone(&table->zones[2], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_R1, 979, 0, 1469, TOUCH_HEIGHT / 2);
+	set_zone(&table->zones[3], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_R3, 979, TOUCH_HEIGHT / 2, 1469, TOUCH_HEIGHT);
+}
+
 static int is_space(char c){
 	// '\r' counts so files written on Windows parse
 	return c == ' ' || c == '\t' || c == '\r';

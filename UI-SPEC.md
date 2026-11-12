@@ -11,6 +11,14 @@ Every `path:line` reference points at the unmodified v1.9.2 tree.
 > diagnostic); the `body` target is 1000 in SETUP, 600 in PLAY, 0 when idle or in the diagnostic view;
 > `UI_IDLE_TIMEOUT_US` is 120 s like the SETUP timeout; `Mirror=Off` hides the body as well as the lit
 > parts in PLAY. PLAY at rest costs 3 draw calls instead of 0.
+>
+> **Second revision, 2026-11-12: rear touch zones.** The rear panel now has its own zone table
+> (`zones_default_rear`, optional `rear-zones.txt`), its own latches (`TouchLatches`), a setting
+> `RearTouch=Zones|Forward` (default Zones) and its own outlines in the zone hint. In Zones mode the
+> rear zone bits are ORed into `buttons` and `rear_num` stays 0 (v2), the rear click flags are not set
+> (v1), and no DS4 touchpad contact is produced (USB). This replaces every statement below that the
+> rear panel is untouched or has no visuals. The diagnostic view has 19 lines (a "Rear touch" line
+> follows the "Front touch" line). `UI_DRAW_MAX` is 1024.
 
 Terms used throughout:
 

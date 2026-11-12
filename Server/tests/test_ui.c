@@ -985,6 +985,8 @@ static StatsInput base_stats(void){
 	in.battery = 100;
 	in.zones_owned = 1;
 	in.zones_count = 5;
+	in.rear_owned = 1;
+	in.rear_count = 4;
 	in.mirror_enabled = 1;
 	in.art_loaded = 1;
 	return in;
@@ -1082,9 +1084,9 @@ static void test_diag(void){
 	in.fast.reads_per_s = 240;
 	in.fast.read_us = 55;
 	in.fast.read_max_us = 130;
-	CHECK(stats_diag(&in, &ft, L) == 18);
-	CHECK(STATS_DIAG_LINES == 18);
-	for (int i = 0; i < 9; i++) CHECK_STR(L[9 + i], credits[i]);
+	CHECK(stats_diag(&in, &ft, L) == 19);
+	CHECK(STATS_DIAG_LINES == 19);
+	for (int i = 0; i < 9; i++) CHECK_STR(L[10 + i], credits[i]);
 	for (int i = 0; i < STATS_DIAG_LINES; i++) CHECK(strlen(L[i]) < STATS_LINE_MAX);
 	CHECK_STR(L[0], "VitaPad NG 2.0 diagnostics - tap the centre to close");
 	CHECK_STR(L[1], "Input updates/s: buttons & sticks 60, touch 59, motion 120");
@@ -1093,8 +1095,9 @@ static void test_diag(void){
 	CHECK_STR(L[4], "Frame: measuring");
 	CHECK_STR(L[5], "Battery: 100%");
 	CHECK_STR(L[6], "Front touch: 5 zones from built-in defaults");
-	CHECK_STR(L[7], "Mirror: on");
-	CHECK_STR(L[8], "");
+	CHECK_STR(L[7], "Rear touch: 4 zones from built-in defaults");
+	CHECK_STR(L[8], "Mirror: on");
+	CHECK_STR(L[9], "");
 
 	in.rates.streamed = 0;
 	in.wifi_link = 1;
@@ -1147,15 +1150,29 @@ static void test_diag(void){
 	in.zones_owned = 0;
 	stats_diag(&in, &ft, L);
 	CHECK_STR(L[6], "Front touch: forwarded to the PC (FrontTouch=Forward)");
+	in.rear_source = 1;
+	in.rear_count = 3;
+	stats_diag(&in, &ft, L);
+	CHECK_STR(L[7], "Rear touch: 3 zones from rear-zones.txt");
+	in.rear_source = -1;
+	in.rear_count = 4;
+	stats_diag(&in, &ft, L);
+	CHECK_STR(L[7], "Rear touch: 4 zones from built-in defaults (rear-zones.txt is invalid)");
+	in.rear_owned = 0;
+	stats_diag(&in, &ft, L);
+	CHECK_STR(L[7], "Rear touch: forwarded to the PC (RearTouch=Forward)");
+	CHECK_STR(L[6], "Front touch: forwarded to the PC (FrontTouch=Forward)");   // independent of the front line
+	in.rear_owned = 1;
+	in.rear_source = 0;
 	in.mirror_enabled = 0;
 	stats_diag(&in, &ft, L);
-	CHECK_STR(L[7], "Mirror: off (Mirror=Off)");
+	CHECK_STR(L[8], "Mirror: off (Mirror=Off)");
 	in.art_loaded = 0;
 	stats_diag(&in, &ft, L);
-	CHECK_STR(L[7], "Mirror: off (Mirror=Off) - controller art missing");
+	CHECK_STR(L[8], "Mirror: off (Mirror=Off) - controller art missing");
 	in.mirror_enabled = 1;
 	stats_diag(&in, &ft, L);
-	CHECK_STR(L[7], "Mirror: on - controller art missing");
+	CHECK_STR(L[8], "Mirror: on - controller art missing");
 
 	// Even the worst values fit
 	in.rates.ctrl = in.rates.touch = in.rates.motion = 2000000000;
@@ -1210,7 +1227,7 @@ static void test_sprites(void){
 typedef struct {
 	Screen s;
 	MirrorState m;
-	ZoneTable z;
+	ZoneTable z, rz;
 	SetupInfo setup;
 	StatsInput st;
 	FrameTime ft;
@@ -1223,6 +1240,7 @@ static void fx_init(Fx *f){
 	memset(f, 0, sizeof(*f));
 	screen_init(&f->s, 0);
 	zones_default(&f->z);
+	zones_default_rear(&f->rz);
 	f->setup.has_ip = 1;
 	snprintf(f->setup.ip, sizeof(f->setup.ip), "192.168.1.42");
 	f->setup.port = 5000;
@@ -1237,6 +1255,7 @@ static void fx_init(Fx *f){
 	f->model.screen = &f->s;
 	f->model.mirror = &f->m;
 	f->model.zones = &f->z;
+	f->model.rear_zones = &f->rz;   // rear_owned stays 0: the rear tests switch it on
 	f->model.setup = &f->setup;
 	f->model.stats = &f->st;
 	f->model.frame = &f->ft;
@@ -1399,16 +1418,16 @@ static void test_draw_order(void){
 	CHECK(item_at(&dl, 1)->sprite == SPR_STICK_L_CAP && item_at(&dl, 1)->x == sprite_rects[SPR_STICK_L_CAP].sx + 12);
 	CHECK(item_at(&dl, 2)->sprite == SPR_STICK_R_CAP && item_at(&dl, 2)->x == sprite_rects[SPR_STICK_R_CAP].sx);
 
-	// Diagnostic: only text, in the 18-line layout, and nothing else while it is visible
+	// Diagnostic: only text, in the 19-line layout, and nothing else while it is visible
 	Fx g;
 	fx_init(&g);
 	fx_levels(&g, SCREEN_SETUP, 1000, 1000, 1000, 1000, STATS_DIAG);
 	fx_all_pressed(&g);
 	uiplan_build(&g.model, &dl);
 	CHECK(count_kind(&dl, DRAW_TEXT) == dl.count);
-	CHECK(dl.count == STATS_DIAG_LINES - 1);                   // line 8 is empty and not emitted
+	CHECK(dl.count == STATS_DIAG_LINES - 1);                   // line 9 is empty and not emitted
 	CHECK(item_at(&dl, 0)->x == 16 && item_at(&dl, 0)->y == 28 && item_at(&dl, 0)->align == ALIGN_LEFT);
-	CHECK(item_at(&dl, dl.count - 1)->y == 28 + 21 * 17);
+	CHECK(item_at(&dl, dl.count - 1)->y == 28 + 21 * 18);
 	// While it fades out nothing else is drawn; at level 0 the mirror is back
 	fx_levels(&g, SCREEN_SETUP, 1000, 1000, 0, 1, STATS_DIAG);
 	uiplan_build(&g.model, &dl);
@@ -1823,6 +1842,234 @@ static void test_layout(void){
 	CHECK(dl.items[27].x == 0 && dl.items[27].y == 271 && dl.items[27].y1 == 0);
 }
 
+// ---------------------------------------------------------------- rear zones
+
+static const char rear_default_text[] =
+	"# Default rear zones\n"
+	"L1 rect 451 0 941 544\n"
+	"L3 rect 451 544 941 1088\n"
+	"R1 rect 979 0 1469 544\n"
+	"R3 rect 979 544 1469 1088\n";
+
+static void test_rear_table(void){
+	ZoneTable t;
+	zones_default_rear(&t);
+	CHECK(t.count == 4);
+	CHECK(zone_is(&t.zones[0], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_L1, 451, 0, 941, 544));
+	CHECK(zone_is(&t.zones[1], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_L3, 451, 544, 941, 1088));
+	CHECK(zone_is(&t.zones[2], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_R1, 979, 0, 1469, 544));
+	CHECK(zone_is(&t.zones[3], ZONE_SHAPE_RECT, ZONE_ACTION_BUTTON, PAD_R3, 979, 544, 1469, 1088));
+
+	// The built-in table text parses back to the same table
+	ZoneTable p;
+	CHECK(zones_parse(rear_default_text, &p) == 4);
+	CHECK(tables_equal(&p, &t));
+
+	// Inside each zone
+	CHECK(zones_hit(&t, 700, 200) == 0);
+	CHECK(zones_hit(&t, 700, 800) == 1);
+	CHECK(zones_hit(&t, 1200, 200) == 2);
+	CHECK(zones_hit(&t, 1200, 800) == 3);
+	// Corners: first and last live unit of each rectangle
+	CHECK(zones_hit(&t, 451, 0) == 0);
+	CHECK(zones_hit(&t, 940, 543) == 0);
+	CHECK(zones_hit(&t, 451, 1087) == 1);
+	CHECK(zones_hit(&t, 940, 1087) == 1);
+	CHECK(zones_hit(&t, 979, 0) == 2);
+	CHECK(zones_hit(&t, 1468, 543) == 2);
+	CHECK(zones_hit(&t, 979, 1087) == 3);
+	CHECK(zones_hit(&t, 1468, 1087) == 3);
+	// Dead edges: x 450 and x 1469 (half-open), the outer margins, the centre gap
+	CHECK(zones_hit(&t, 450, 200) == -1);
+	CHECK(zones_hit(&t, 450, 800) == -1);
+	CHECK(zones_hit(&t, 1469, 200) == -1);
+	CHECK(zones_hit(&t, 1469, 800) == -1);
+	CHECK(zones_hit(&t, 0, 0) == -1);
+	CHECK(zones_hit(&t, 1919, 1087) == -1);
+	for (int x = 941; x <= 978; x++){
+		CHECK(zones_hit(&t, (uint16_t)x, 200) == -1);
+		CHECK(zones_hit(&t, (uint16_t)x, 800) == -1);
+	}
+	// The y split
+	CHECK(zones_hit(&t, 700, 543) == 0);
+	CHECK(zones_hit(&t, 700, 544) == 1);
+	CHECK(zones_hit(&t, 1200, 543) == 2);
+	CHECK(zones_hit(&t, 1200, 544) == 3);
+
+	// Resolve: a contact that lands in the dead margin never presses anything, wherever it slides
+	ZoneLatch latch;
+	zones_latch_reset(&latch);
+	ZonePoint p1 = { 300, 200, 1 };
+	int fresh = 0;
+	CHECK(zones_resolve(&t, &p1, 1, &latch, &fresh) == 0);
+	CHECK(fresh == 1);
+	p1.x = 700;
+	CHECK(zones_resolve(&t, &p1, 1, &latch, &fresh) == 0);
+	CHECK(fresh == 0);
+	CHECK(latch.zone[0] == -1);
+	CHECK(zones_resolve(&t, &p1, 0, &latch, &fresh) == 0);   // lifts
+	CHECK(latch.count == 0);
+	CHECK(zones_resolve(&t, &p1, 1, &latch, &fresh) == PAD_L1);   // lands again, now inside L1
+	// A contact that lands in L1 keeps L1 when it slides into the R3 rectangle
+	zones_latch_reset(&latch);
+	ZonePoint p2 = { 700, 200, 2 };
+	CHECK(zones_resolve(&t, &p2, 1, &latch, &fresh) == PAD_L1);
+	p2.x = 1200;
+	p2.y = 800;
+	CHECK(zones_resolve(&t, &p2, 1, &latch, &fresh) == PAD_L1);
+	CHECK(fresh == 0);
+	// Two contacts in L1 and R3 give both bits
+	zones_latch_reset(&latch);
+	ZonePoint two[2] = { { 700, 200, 3 }, { 1200, 800, 4 } };
+	CHECK(zones_resolve(&t, two, 2, &latch, &fresh) == (PAD_L1 | PAD_R3));
+	CHECK(fresh == 2);
+
+	// A Stats zone in a rear table parses, but resolves to no button
+	ZoneTable st;
+	CHECK(zones_parse("Stats rect 451 0 941 544\n", &st) == 1);
+	ZonePoint ps = { 700, 200, 5 };
+	zones_latch_reset(&latch);
+	CHECK(zones_resolve(&st, &ps, 1, &latch, &fresh) == 0);
+}
+
+static int count_text(const DrawList *l, const char *text, uint32_t rgb_color_alpha255){
+	int n = 0;
+	for (int i = 0; i < l->count; i++){
+		const DrawItem *it = &l->items[i];
+		if (it->kind == DRAW_TEXT && strcmp(it->text, text) == 0 && (rgb_color_alpha255 == 0 || it->color == rgb_color_alpha255)) n++;
+	}
+	return n;
+}
+
+static int count_color(const DrawList *l, int kind, uint32_t color){
+	int n = 0;
+	for (int i = 0; i < l->count; i++) n += l->items[i].kind == kind && l->items[i].color == color;
+	return n;
+}
+
+static void test_rear_hint(void){
+	const uint32_t line_col = (uint32_t)UI_RGBA(0x4A, 0x3A, 0x62, 255);
+	const uint32_t label_col = (uint32_t)UI_RGBA(0x9A, 0x7F, 0xC8, 255);
+	static const char *const labels[4] = { "L1 rear", "L3 rear", "R1 rear", "R3 rear" };   // table order
+
+	Fx f;
+	fx_init(&f);
+	fx_levels(&f, SCREEN_PLAY, 0, 0, 1000, 0, STATS_SUMMARY);
+	uiplan_build(&f.model, &dl);
+	const int base_count = dl.count;
+	CHECK(base_count == 24 + 4 * 4 + 5);                       // front only: ellipse + 4 rects + 5 labels
+	CHECK(count_color(&dl, DRAW_LINE, line_col) == 0);
+
+	f.model.rear_owned = 1;
+	uiplan_build(&f.model, &dl);
+	CHECK(dl.count == base_count + 16 + 4);
+	CHECK(count_color(&dl, DRAW_LINE, line_col) == 16);
+	CHECK(count_color(&dl, DRAW_TEXT, label_col) == 4);
+	// After the front zones: front lines, front labels, rear lines, rear labels
+	const int rear_first = base_count;
+	for (int k = 0; k < 16; k++){
+		CHECK(item_at(&dl, rear_first + k)->kind == DRAW_LINE);
+		CHECK(item_at(&dl, rear_first + k)->color == line_col);
+	}
+	// First rear rectangle: L1 rear, x 451..941 and y 0..544 in touch units, so (225, 0) to (469, 271)
+	CHECK(item_at(&dl, rear_first)->x == 225 && item_at(&dl, rear_first)->y == 0);
+	CHECK(item_at(&dl, rear_first)->x1 == 469 && item_at(&dl, rear_first)->y1 == 0);
+	CHECK(item_at(&dl, rear_first + 1)->x == 469 && item_at(&dl, rear_first + 1)->y1 == 271);
+	for (int k = 0; k < 4; k++){
+		const DrawItem *it = item_at(&dl, rear_first + 16 + k);
+		CHECK(it->kind == DRAW_TEXT);
+		CHECK_STR(it->text, labels[k]);
+		CHECK(it->color == label_col);
+		CHECK(it->align == ALIGN_CENTER && it->scale > 0.89f && it->scale < 0.91f);
+		const Zone *z = &f.rz.zones[k];
+		CHECK(it->x == (z->a + z->c) / 4 && it->y == (z->b + z->d) / 4 + 6);
+	}
+	// The front items are untouched by the rear layer
+	Fx g;
+	fx_init(&g);
+	fx_levels(&g, SCREEN_PLAY, 0, 0, 1000, 0, STATS_SUMMARY);
+	static DrawList front_only;
+	uiplan_build(&g.model, &front_only);
+	for (int i = 0; i < base_count; i++) CHECK(memcmp(&front_only.items[i], &dl.items[i], sizeof(DrawItem)) == 0);
+
+	// Not owned, or no table: none of them
+	f.model.rear_owned = 0;
+	uiplan_build(&f.model, &dl);
+	CHECK(dl.count == base_count);
+	CHECK(count_text(&dl, "L1 rear", 0) == 0);
+	f.model.rear_owned = 1;
+	f.model.rear_zones = NULL;
+	uiplan_build(&f.model, &dl);
+	CHECK(dl.count == base_count);
+	CHECK(count_color(&dl, DRAW_LINE, line_col) == 0);
+
+	// The hint level scales the rear alpha like the front one
+	f.model.rear_zones = &f.rz;
+	fx_levels(&f, SCREEN_PLAY, 0, 0, 500, 0, STATS_SUMMARY);
+	uiplan_build(&f.model, &dl);
+	CHECK(alpha_of(item_at(&dl, rear_first)) == 500 * 255 / 1000);
+
+	// A hint level of 0 draws nothing at all, rear included
+	fx_levels(&f, SCREEN_PLAY, 0, 0, 0, 0, STATS_SUMMARY);
+	uiplan_build(&f.model, &dl);
+	CHECK(dl.count == 0);
+
+	// A Stats zone in the rear table is outlined but has no label
+	fx_levels(&f, SCREEN_PLAY, 0, 0, 1000, 0, STATS_SUMMARY);
+	CHECK(zones_parse("Stats rect 451 0 941 544\nR1 rect 979 0 1469 544\n", &f.rz) == 2);
+	uiplan_build(&f.model, &dl);
+	CHECK(count_color(&dl, DRAW_LINE, line_col) == 8);
+	CHECK(count_color(&dl, DRAW_TEXT, label_col) == 1);
+	CHECK(count_text(&dl, "stats", 0) == 1);                   // the front one only
+
+	// Budgets with both built-in tables, the worst frames
+	fx_init(&f);
+	f.model.rear_owned = 1;
+	fx_levels(&f, SCREEN_SETUP, 1000, 1000, 1000, 500, STATS_SUMMARY);
+	fx_all_pressed(&f);
+	f.m.lit |= 1u << PART_DPAD_DOWN;
+	f.m.lcap_deflected = f.m.rcap_deflected = 1;
+	f.setup.connection = CONNECTION_USB_GENERIC;
+	f.setup.usb_state = USB_STATE_WAITING;
+	f.setup.remap_count = 12;
+	int c = plan_cost(&f);
+	CHECK(c <= UI_DRAW_BUDGET);
+	fx_levels(&f, SCREEN_PLAY, UI_PLAY_BODY_LEVEL, 1000, 1000, 0, STATS_SUMMARY);
+	c = plan_cost(&f);
+	CHECK(c <= UI_DRAW_BUDGET);
+	fx_levels(&f, SCREEN_SETUP, 0, 0, 0, 1000, STATS_DIAG);
+	c = plan_cost(&f);
+	CHECK(c <= UI_DRAW_BUDGET_DIAG);
+
+	// Sixteen ellipses in both zones.txt and rear-zones.txt still fit in the list, and the builder never overruns it
+	static char big[2048];
+	big[0] = 0;
+	for (int i = 0; i < 16; i++){
+		char line[64];
+		snprintf(line, sizeof(line), "%s ellipse %d %d 200 100\n", i % 2 ? "L1" : "Stats", 200 + 100 * (i % 8), 200 + 300 * (i / 8));
+		strcat(big, line);
+	}
+	fx_init(&f);
+	CHECK(zones_parse(big, &f.z) == 16);
+	CHECK(zones_parse(big, &f.rz) == 16);
+	f.model.rear_owned = 1;
+	fx_levels(&f, SCREEN_SETUP, 1000, 1000, 1000, 500, STATS_SUMMARY);
+	fx_all_pressed(&f);
+	f.m.lit |= 1u << PART_DPAD_DOWN;
+	f.m.lcap_deflected = f.m.rcap_deflected = 1;
+	c = plan_cost(&f);
+	CHECK(count_kind(&dl, DRAW_LINE) == 32 * UI_HINT_ELLIPSE_SEGMENTS);
+	CHECK(dl.count <= UI_DRAW_MAX);
+	CHECK(c <= UI_DRAW_BUDGET_DIAG);
+
+	// A list that is already nearly full: nothing is written past UI_DRAW_MAX
+	static DrawList tight;
+	memset(&tight, 0xA5, sizeof(tight));
+	uiplan_build(&f.model, &tight);
+	CHECK(tight.count <= UI_DRAW_MAX);
+}
+
+
 int main(void){
 	test_default_table();
 	test_hit();
@@ -1852,6 +2099,8 @@ int main(void){
 	test_budget();
 	test_alpha();
 	test_layout();
+	test_rear_table();
+	test_rear_hint();
 	printf("%d checks, %d failed\n", checks, failed);
 	return failed ? 1 : 0;
 }

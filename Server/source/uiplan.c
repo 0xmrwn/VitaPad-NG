@@ -16,6 +16,9 @@
 #define COL_TITLE      0x566070u
 #define COL_HINT_LINE  0x3A4A62u
 #define COL_HINT_LABEL 0x6F93C8u
+// The rear zones get their own hue so they cannot be mistaken for front zones
+#define COL_HINT_REAR_LINE  0x4A3A62u
+#define COL_HINT_REAR_LABEL 0x9A7FC8u
 
 // Screen layout of section 12 (the screen is 960 wide, everything is centred on its middle)
 #define CENTRE_X 480
@@ -182,31 +185,42 @@ static const char *zone_label(const Zone *z){
 	return NULL;
 }
 
-static void emit_hint(const UiModel *m, DrawList *l, int alpha){
-	const ZoneTable *zt = m->zones;
-	if (!zt) return;
+// Rear zones are buttons only: a Stats zone is legal in rear-zones.txt but does nothing there, so it gets no label
+static const char *rear_zone_label(const Zone *z){
+	if (z->action != ZONE_ACTION_BUTTON) return NULL;
+	if (z->buttons == PAD_L1) return "L1 rear";
+	if (z->buttons == PAD_R1) return "R1 rear";
+	if (z->buttons == PAD_L3) return "L3 rear";
+	if (z->buttons == PAD_R3) return "R3 rear";
+	return NULL;
+}
+
+// One table: outlines first, then labels. Both panels share the geometry (touch units / 2 = screen pixels)
+static void emit_zone_table(const ZoneTable *zt, DrawList *l, int rear, int alpha){
+	const uint32_t line_col = rear ? COL_HINT_REAR_LINE : COL_HINT_LINE;
+	const uint32_t label_col = rear ? COL_HINT_REAR_LABEL : COL_HINT_LABEL;
 	int n = zt->count > ZONE_MAX ? ZONE_MAX : zt->count;
 	// Touch units to screen pixels: the front panel covers the 960x544 screen at half scale
 	for (int i = 0; i < n; i++){
 		const Zone *z = &zt->zones[i];
 		if (z->shape == ZONE_SHAPE_RECT){
 			int x0 = z->a / 2, y0 = z->b / 2, x1 = z->c / 2 - 1, y1 = z->d / 2 - 1;
-			add_line(l, x0, y0, x1, y0, COL_HINT_LINE, alpha);
-			add_line(l, x1, y0, x1, y1, COL_HINT_LINE, alpha);
-			add_line(l, x1, y1, x0, y1, COL_HINT_LINE, alpha);
-			add_line(l, x0, y1, x0, y0, COL_HINT_LINE, alpha);
+			add_line(l, x0, y0, x1, y0, line_col, alpha);
+			add_line(l, x1, y0, x1, y1, line_col, alpha);
+			add_line(l, x1, y1, x0, y1, line_col, alpha);
+			add_line(l, x0, y1, x0, y0, line_col, alpha);
 		}else{
 			int cx = z->a / 2, cy = z->b / 2, rx = z->c / 2, ry = z->d / 2;
 			for (int k = 0; k < UI_HINT_ELLIPSE_SEGMENTS; k++){
 				int k1 = (k + 1) % UI_HINT_ELLIPSE_SEGMENTS;
 				add_line(l, cx + scaled(rx, cos24[k]), cy + scaled(ry, cos24[(k + 18) % 24]),
-					cx + scaled(rx, cos24[k1]), cy + scaled(ry, cos24[(k1 + 18) % 24]), COL_HINT_LINE, alpha);
+					cx + scaled(rx, cos24[k1]), cy + scaled(ry, cos24[(k1 + 18) % 24]), line_col, alpha);
 			}
 		}
 	}
 	for (int i = 0; i < n; i++){
 		const Zone *z = &zt->zones[i];
-		const char *label = zone_label(z);
+		const char *label = rear ? rear_zone_label(z) : zone_label(z);
 		if (!label) continue;
 		int cx, cy;
 		if (z->shape == ZONE_SHAPE_RECT){
@@ -217,8 +231,14 @@ static void emit_hint(const UiModel *m, DrawList *l, int alpha){
 			cy = z->b / 2;
 		}
 		// The baseline sits a little below the centre so the glyphs look centred
-		add_text(l, ALIGN_CENTER, cx, cy + 6, 0, 0.9f, COL_HINT_LABEL, alpha, label);
+		add_text(l, ALIGN_CENTER, cx, cy + 6, 0, 0.9f, label_col, alpha, label);
 	}
+}
+
+static void emit_hint(const UiModel *m, DrawList *l, int alpha){
+	if (m->zones) emit_zone_table(m->zones, l, 0, alpha);
+	// The rear panel is a second layer after the front one, only when the Vita owns it
+	if (m->rear_owned && m->rear_zones) emit_zone_table(m->rear_zones, l, 1, alpha);
 }
 
 static void emit_summary(const UiModel *m, DrawList *l, int alpha){
@@ -233,7 +253,7 @@ static void emit_diag(const UiModel *m, DrawList *l, int alpha){
 	char lines[STATS_DIAG_LINES][STATS_LINE_MAX];
 	int n = stats_diag(m->stats, m->frame, lines);
 	for (int i = 0; i < n; i++){
-		uint32_t col = i >= 9 ? COL_LABEL : COL_VALUE;
+		uint32_t col = i >= 10 ? COL_LABEL : COL_VALUE;
 		add_text(l, ALIGN_LEFT, 16, 28 + 21 * i, 0, 0.85f, col, alpha, lines[i]);
 	}
 }

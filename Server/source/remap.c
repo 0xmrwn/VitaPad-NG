@@ -98,6 +98,10 @@ void remap_load(void){
 			touchzones_set_owns_front(strcmp(eq + 1, "Forward") != 0);
 			continue;
 		}
+		if (strcmp(line, "RearTouch") == 0){
+			touchzones_set_owns_rear(strcmp(eq + 1, "Forward") != 0);
+			continue;
+		}
 		if (strcmp(line, "Mirror") == 0){
 			ui_set_mirror_enabled(strcmp(eq + 1, "Off") != 0);
 			continue;
@@ -119,6 +123,7 @@ static void remap_save(void){
 	fprintf(f, "FastButtons=%s\n", fast_enabled() ? "On" : "Off");
 	fprintf(f, "Connection=%s\n", usb_connection_id(usb_connection()));
 	fprintf(f, "FrontTouch=%s\n", touchzones_owns_front() ? "Zones" : "Forward");
+	fprintf(f, "RearTouch=%s\n", touchzones_owns_rear() ? "Zones" : "Forward");
 	fprintf(f, "Mirror=%s\n", ui_mirror_enabled() ? "On" : "Off");
 	fclose(f);
 }

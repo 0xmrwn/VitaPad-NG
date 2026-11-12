@@ -16,6 +16,13 @@ static const char default_text[] =
 	"L3 rect 0 544 960 1088\n"
 	"R3 rect 960 544 1920 1088\n";
 
+static const char rear_default_text[] =
+	"# Default rear zones (coordinates as seen from the front)\n"
+	"L1 rect 451 0 941 544\n"
+	"L3 rect 451 544 941 1088\n"
+	"R1 rect 979 0 1469 544\n"
+	"R3 rect 979 544 1469 1088\n";
+
 static const char *kind_name(const Zone *z){
 	if (z->action == ZONE_ACTION_STATS) return "Stats";
 	if (z->action == ZONE_ACTION_NONE) return "None";
@@ -85,7 +92,14 @@ int main(int argc, char **argv){
 			fprintf(stderr, "zones_lint self-test FAILED: the default table text does not match zones_default\n");
 			return 1;
 		}
-		printf("zones_lint self-test: ok (%d zones)\n", n);
+		ZoneTable rear_parsed, rear_def;
+		zones_default_rear(&rear_def);
+		int rn = zones_parse(rear_default_text, &rear_parsed);
+		if (rn != 4 || !same_table(&rear_parsed, &rear_def)){
+			fprintf(stderr, "zones_lint self-test FAILED: the default rear table text does not match zones_default_rear\n");
+			return 1;
+		}
+		printf("zones_lint self-test: ok (%d zones, %d rear zones)\n", n, rn);
 		return 0;
 	}
 

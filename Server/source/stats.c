@@ -107,9 +107,14 @@ int stats_diag(const StatsInput *in, const FrameTime *f, char lines[STATS_DIAG_L
 	else if (in->zones_source < 0) snprintf(lines[6], STATS_LINE_MAX, "Front touch: %d zones from built-in defaults (zones.txt is invalid)", in->zones_count);
 	else snprintf(lines[6], STATS_LINE_MAX, "Front touch: %d zones from built-in defaults", in->zones_count);
 
-	snprintf(lines[7], STATS_LINE_MAX, "Mirror: %s%s", in->mirror_enabled ? "on" : "off (Mirror=Off)", in->art_loaded ? "" : " - controller art missing");
+	if (!in->rear_owned) snprintf(lines[7], STATS_LINE_MAX, "Rear touch: forwarded to the PC (RearTouch=Forward)");
+	else if (in->rear_source > 0) snprintf(lines[7], STATS_LINE_MAX, "Rear touch: %d zones from rear-zones.txt", in->rear_count);
+	else if (in->rear_source < 0) snprintf(lines[7], STATS_LINE_MAX, "Rear touch: %d zones from built-in defaults (rear-zones.txt is invalid)", in->rear_count);
+	else snprintf(lines[7], STATS_LINE_MAX, "Rear touch: %d zones from built-in defaults", in->rear_count);
 
-	// lines[8] stays empty
-	for (int i = 0; i < 9; i++) snprintf(lines[9 + i], STATS_LINE_MAX, "%s", credits[i]);
+	snprintf(lines[8], STATS_LINE_MAX, "Mirror: %s%s", in->mirror_enabled ? "on" : "off (Mirror=Off)", in->art_loaded ? "" : " - controller art missing");
+
+	// lines[9] stays empty
+	for (int i = 0; i < 9; i++) snprintf(lines[10 + i], STATS_LINE_MAX, "%s", credits[i]);
 	return STATS_DIAG_LINES;
 }

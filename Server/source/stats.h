@@ -7,7 +7,7 @@
 #define FRAME_LATE_US 17500   // a period this long means at least one vblank was missed
 #define STATS_LINE_MAX 120
 #define STATS_SUMMARY_LINES 4
-#define STATS_DIAG_LINES 18
+#define STATS_DIAG_LINES 19
 
 typedef struct {
 	uint64_t window_start_us, last_swap_us;
@@ -26,6 +26,9 @@ typedef struct {
 	int zones_owned;        // FrontTouch=Zones
 	int zones_source;       // 0 built-in, 1 zones.txt, -1 zones.txt invalid (built-in used)
 	int zones_count;
+	int rear_owned;         // RearTouch=Zones
+	int rear_source;        // 0 built-in, 1 rear-zones.txt, -1 rear-zones.txt invalid (built-in used)
+	int rear_count;
 	int mirror_enabled;
 	int art_loaded;
 } StatsInput;

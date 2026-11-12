@@ -28,46 +28,59 @@ _Static_assert(PAD_SQUARE == SCE_CTRL_SQUARE, "PAD_SQUARE");
 _Static_assert(PAD_PS == SCE_CTRL_PSBUTTON, "PAD_PS");
 
 #define ZONES_FILE APP_DATA_DIR "/zones.txt"
-// A zones.txt of this many bytes or more is rejected
+#define REAR_ZONES_FILE APP_DATA_DIR "/rear-zones.txt"
+// A zones file of this many bytes or more is rejected
 #define ZONES_FILE_MAX 2048
 
-// Written only by touchzones_init() (and the setter), before the input threads exist; read-only afterwards,
+// Written only by touchzones_init() (and the setters), before the input threads exist; read-only afterwards,
 // so the input threads need no lock
-static SceTouchPanelInfo front_panel;
-static ZoneTable table;
-static int source = 0;
+static SceTouchPanelInfo front_panel, rear_panel;
+static ZoneTable table, rear_table;
+static int source = 0, rear_source = 0;
 static volatile int owns_front = 1;
+static volatile int owns_rear = 1;
 
-void touchzones_init(void){
-	sceTouchGetPanelInfo(SCE_TOUCH_PORT_FRONT, &front_panel);
-	zones_default(&table);
-	source = 0;
-
-	FILE *f = fopen(ZONES_FILE, "r");
-	if (f == NULL) return;
+// Reads a zones file over *t. Returns 0 when the file does not exist, 1 when it replaced *t, -1 when it is invalid
+// (*t is left alone then, so the built-in table stays)
+static int load_table(const char *path, ZoneTable *t){
+	FILE *f = fopen(path, "r");
+	if (f == NULL) return 0;
 	static char text[ZONES_FILE_MAX];
 	size_t len = fread(text, 1, sizeof(text), f);
 	fclose(f);
 	// Too long (or exactly full, so it may be truncated): the whole file counts as invalid
-	if (len >= sizeof(text)){
-		source = -1;
-		return;
-	}
+	if (len >= sizeof(text)) return -1;
 	text[len] = 0;
-	// zones_parse leaves the table alone on error, so the built-in one stays
-	source = zones_parse(text, &table) > 0 ? 1 : -1;
+	return zones_parse(text, t) > 0 ? 1 : -1;
+}
+
+void touchzones_init(void){
+	sceTouchGetPanelInfo(SCE_TOUCH_PORT_FRONT, &front_panel);
+	sceTouchGetPanelInfo(SCE_TOUCH_PORT_BACK, &rear_panel);
+	zones_default(&table);
+	zones_default_rear(&rear_table);
+	source = load_table(ZONES_FILE, &table);
+	rear_source = load_table(REAR_ZONES_FILE, &rear_table);
 }
 
 // Same arithmetic as fill_touch in main.c
-int touchzones_read(const SceTouchData *front, ZonePoint points[ZONE_MAX_CONTACTS]){
-	if (front == NULL) return 0;
-	int num = front->reportNum > ZONE_MAX_CONTACTS ? ZONE_MAX_CONTACTS : (int)front->reportNum;
+static int read_panel(const SceTouchData *data, const SceTouchPanelInfo *panel, ZonePoint points[ZONE_MAX_CONTACTS]){
+	if (data == NULL) return 0;
+	int num = data->reportNum > ZONE_MAX_CONTACTS ? ZONE_MAX_CONTACTS : (int)data->reportNum;
 	for (int i = 0; i < num; i++){
-		points[i].x = zones_normalise(front->report[i].x, front_panel.minAaX, front_panel.maxAaX, TOUCH_WIDTH);
-		points[i].y = zones_normalise(front->report[i].y, front_panel.minAaY, front_panel.maxAaY, TOUCH_HEIGHT);
-		points[i].id = front->report[i].id;
+		points[i].x = zones_normalise(data->report[i].x, panel->minAaX, panel->maxAaX, TOUCH_WIDTH);
+		points[i].y = zones_normalise(data->report[i].y, panel->minAaY, panel->maxAaY, TOUCH_HEIGHT);
+		points[i].id = data->report[i].id;
 	}
 	return num;
+}
+
+int touchzones_read(const SceTouchData *front, ZonePoint points[ZONE_MAX_CONTACTS]){
+	return read_panel(front, &front_panel, points);
+}
+
+int touchzones_rear_read(const SceTouchData *rear, ZonePoint points[ZONE_MAX_CONTACTS]){
+	return read_panel(rear, &rear_panel, points);
 }
 
 uint32_t touchzones_buttons(const SceTouchData *front, ZoneLatch *latch){
@@ -76,12 +89,26 @@ uint32_t touchzones_buttons(const SceTouchData *front, ZoneLatch *latch){
 	return zones_resolve(&table, points, num, latch, NULL);
 }
 
+uint32_t touchzones_rear_buttons(const SceTouchData *rear, ZoneLatch *latch){
+	ZonePoint points[ZONE_MAX_CONTACTS];
+	int num = touchzones_rear_read(rear, points);
+	return zones_resolve(&rear_table, points, num, latch, NULL);
+}
+
 const ZoneTable *touchzones_table(void){
 	return &table;
 }
 
+const ZoneTable *touchzones_rear_table(void){
+	return &rear_table;
+}
+
 int touchzones_source(void){
 	return source;
+}
+
+int touchzones_rear_source(void){
+	return rear_source;
 }
 
 int touchzones_owns_front(void){
@@ -90,4 +117,12 @@ int touchzones_owns_front(void){
 
 void touchzones_set_owns_front(int owns){
 	owns_front = owns != 0;
+}
+
+int touchzones_owns_rear(void){
+	return owns_rear;
+}
+
+void touchzones_set_owns_rear(int owns){
+	owns_rear = owns != 0;
 }

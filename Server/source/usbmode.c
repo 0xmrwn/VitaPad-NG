@@ -31,8 +31,9 @@ int vitapadKernelUsbGetState(void);
 
 static volatile int connection = CONNECTION_WIFI;
 static SceTouchPanelInfo rear_panel;
-// Only the USB thread uses it (read_input)
+// Only the USB thread uses them (read_input)
 static ZoneLatch zone_latch;
+static ZoneLatch rear_latch;
 
 // Everything read from the Vita for one report
 typedef struct {
@@ -78,6 +79,13 @@ static int read_input(Input *in){
 	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) front.reportNum = 0;
 	// Front touch zones, the same table as Wi-Fi (USB has no client to forward touches to)
 	in->buttons = remap_buttons(fast_apply(pad.buttons)) | ps_buttons() | touchzones_buttons(&front, &zone_latch);
+	// The rear panel is read before the button map below, so its zone bits reach the USB buttons too.
+	// A failed read counts as no contact
+	SceTouchData rear;
+	const int rear_ok = sceTouchPeek(SCE_TOUCH_PORT_BACK, &rear, 1) >= 0;
+	if (!rear_ok) rear.reportNum = 0;
+	const int rear_zones = touchzones_owns_rear();
+	if (rear_zones) in->buttons |= touchzones_rear_buttons(&rear, &rear_latch);
 	for (int i = 0; i < (int)(sizeof(map) / sizeof(map[0])); i++)
 		if (in->buttons & map[i].vita) in->usb_buttons |= map[i].usb;
 	in->lx = pad.lx;
@@ -85,8 +93,8 @@ static int read_input(Input *in){
 	in->rx = pad.rx;
 	in->ry = pad.ry;
 
-	SceTouchData rear;
-	if (sceTouchPeek(SCE_TOUCH_PORT_BACK, &rear, 1) >= 0){
+	// With the rear zones owning the panel no point reaches the DS4 touchpad (rear_num stays 0)
+	if (!rear_zones && rear_ok){
 		int w = rear_panel.maxAaX - rear_panel.minAaX, h = rear_panel.maxAaY - rear_panel.minAaY;
 		for (int i = 0; i < (int)rear.reportNum && i < 2; i++){
 			int x = rear.report[i].x - rear_panel.minAaX, y = rear.report[i].y - rear_panel.minAaY;

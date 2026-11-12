@@ -31,7 +31,7 @@ touch zones for L1/R1/L3/R3, and clean stats. Target hardware is one PCH-1000
 | 12 | Zone hint shows briefly, then fades. | Triggers: a new PC connection, and the first touch after a quiet period. |
 | 13 | The full lit body shows only before a PC connects. | The TCP flag marks a connected PC ([main.c:150](Server/source/main.c), [main.c:166](Server/source/main.c)); the client keeps it alive while streaming ([Client/main.cpp:77-78](Client/main.cpp)). |
 | 14 | Front view kept; the existing SVG is extended, not redrawn. | L1 and L2 need a convention, since the front view shows one sliver per side. |
-| 15 | Rear touch and motion light nothing. | The client decides what rear touch does ([windows.xml:7-9](Client/windows.xml)); motion never stops. |
+| 15 | **Revised 2026-11-12:** two inner areas of the rear panel are touch zones for L1/L3 (left hand) and R1/R3 (right hand); the rest of the rear panel is dead. Motion still lights nothing. | Rear presses reach the PC as button bits, so the mirror lights them like any other press. Rear touch points are no longer forwarded unless `RearTouch=Forward`. |
 | 16 | Live stats appear on demand, then fade. | Hold combos reach the PC as presses ([main.c:123](Server/source/main.c), [main.c:368-372](Server/source/main.c)), so the trigger should not be a button combo. |
 | 17 | Vita app only. | Client, protocol ([Common/protocol.h](Common/protocol.h)) and kernel module stay untouched. |
 | 18 | Installs beside the stock app under its own title ID. | The ID is set in [CMakeLists.txt:15](Server/CMakeLists.txt) and [psbutton.c:14-17](Server/source/psbutton.c). |
@@ -175,6 +175,18 @@ Thumb reach (capture 2, stock app, one 95 s recording):
 - Fixed with `Server/assets/zones-pch1000.txt`, copied to `ux0:data/VitaPadNG/zones.txt`: the stats
   ellipse is now x 425 to 535, y 152 to 392. Checked on the device: the hint outline spans x 426 to 533.
   The built-in default table is unchanged. Delete the file on the Vita to go back.
+
+Rear touch zones (added the same evening, from an annotated photo of the back):
+
+- Built-in table, touch units as seen from the front: L1 451,0 to 941,544; L3 451,544 to 941,1088;
+  R1 979,0 to 1469,544; R3 979,544 to 1469,1088. Outer margins and the centre gap are dead.
+- A file `ux0:data/VitaPadNG/rear-zones.txt` replaces the table (same grammar as `zones.txt`);
+  `Server/assets/rear-zones-pch1000.txt` is the built-in table in that form.
+- Guided check on the device: left upper, right upper and right lower sent L1, R1 and R3 alone.
+  Left lower sent L3, but L1 was seen first; the user was not yet used to the rear pad, so this is
+  not counted as a defect. Watch whether the top/bottom split at half height suits the left hand.
+- 40 seconds of normal play with sticks and buttons: 0 accidental rear presses.
+- Lying on a table: no button, and no rear touch point forwarded.
 
 Still unverified:
 

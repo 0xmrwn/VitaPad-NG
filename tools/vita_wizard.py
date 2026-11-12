@@ -360,6 +360,69 @@ class Wizard:
                     packets_with_points=self.link.front_points_seen, packets=self.link.packets,
                     reconnects=self.link.reconnects)
 
+    def rear_zone(self, hand: str, where: str, bit: int) -> None:
+        self.header(f"back of the Vita, {hand} hand, {where}")
+        self.wait_release()
+        self.say(f"Keep your thumbs off the screen. With a finger of your {BOLD}{hand} hand{RESET}, press the "
+                 f"{BOLD}back{RESET} of the Vita in the {BOLD}{where} part of the inner area{RESET} "
+                 f"(your green square) and hold.")
+        self.say(f"{DIM}Waiting for the Vita to send {names(bit)}... (it gives up after {self.timeout:.0f} s){RESET}")
+        r = self.wait_bits(bit)
+        wrong = int(r["other"]) & ZONE_MASK
+        if r["got"] and not wrong:
+            self.ok(f"the PC receives {names(bit)}. You can lift your finger.")
+        elif r["got"]:
+            self.bad(f"{names(bit)} arrived, but so did {names(wrong)}.")
+        else:
+            self.bad(f"{names(bit)} never arrived. Seen instead: {names(int(r['other']))}.")
+        self.record(f"rear {hand} hand {where}", bool(r["got"] and not wrong), expected=names(bit),
+                    also_seen=names(int(r["other"])))
+
+    def rear_rest(self, seconds: int = 40) -> None:
+        self.header("normal grip, no touching on purpose")
+        self.wait_release()
+        self.say(f"Now hold the Vita exactly as you play. Use the {BOLD}sticks and buttons{RESET} for {seconds} seconds.")
+        self.say("Do not press the screen or the back on purpose. I am counting accidental presses.")
+        self.ask("Press Enter when you are ready; the count starts then.")
+        counts = {L1: 0, R1: 0, L3: 0, R3: 0}
+        prev = [0]
+
+        def watch(p: vm.Pad) -> bool:
+            z = p.buttons & ZONE_MASK
+            for b in counts:
+                if z & b and not prev[0] & b:
+                    counts[b] += 1
+            prev[0] = z
+            return False
+
+        for left in range(seconds, 0, -5):
+            self.say(f"{DIM}{left} s left... accidental presses so far: {sum(counts.values())}{RESET}")
+            self.link.pump(5, watch)
+        total = sum(counts.values())
+        detail = ", ".join(f"{names(b)} x{n}" for b, n in counts.items() if n) or "none"
+        if total == 0:
+            self.ok("no accidental press. You can stop.")
+        else:
+            self.bad(f"{total} accidental presses ({detail}). You can stop.")
+        self.record("rear accidental presses in normal grip", total == 0, total=total, detail=detail, seconds=seconds)
+
+    def run_rear(self) -> None:
+        self.total = 5
+        print(f"{BOLD}VitaPad NG rear touch check{RESET}")
+        print("Each step tells you one thing to do and waits for it. To skip a step, just wait.")
+        self.ask("Press Enter to start.")
+        self.link.pump(1.0)
+        if self.link.pad is None:
+            print(f"{RED}The Vita is not sending anything. Is VitaPad NG open on it?{RESET}")
+            return
+        self.rear_zone("left", "upper", L1)
+        self.rear_zone("left", "lower", L3)
+        self.rear_zone("right", "upper", R1)
+        self.rear_zone("right", "lower", R3)
+        self.rear_rest()
+        note = self.ask("Anything that felt wrong? Type it (or just press Enter).")
+        self.record("free comment", None, comment=note)
+
     def finish(self) -> None:
         os.makedirs(self.out, exist_ok=True)
         with open(os.path.join(self.out, "results.json"), "w") as f:
@@ -377,6 +440,7 @@ def main() -> int:
     ap.add_argument("--host-file", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--vu")
+    ap.add_argument("--rear", action="store_true", help="run the rear touch check instead of the full check")
     ap.add_argument("--answers", help="read answers from lines appended to this file instead of the keyboard")
     ap.add_argument("--timeout", type=float, default=40, help="seconds a step waits before giving up")
     args = ap.parse_args()
@@ -391,7 +455,10 @@ def main() -> int:
         return 2
     wiz = Wizard(link, args.out, args.vu, args.timeout, args.answers)
     try:
-        wiz.run()
+        if args.rear:
+            wiz.run_rear()
+        else:
+            wiz.run()
     except vm.ConnectionFailure as e:
         print(f"\n{RED}Lost the Vita: {e}{RESET}")
     except KeyboardInterrupt:

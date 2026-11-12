@@ -9,7 +9,7 @@
 #define UI_RGBA(r, g, b, a) ((((a) & 0xFF) << 24) | (((b) & 0xFF) << 16) | (((g) & 0xFF) << 8) | ((r) & 0xFF))
 
 #define UI_TEXT_MAX 120
-#define UI_DRAW_MAX 512           // items; a 16-ellipse zones.txt hint alone needs 16 x 24 lines + 16 labels
+#define UI_DRAW_MAX 1024          // items; a 16-ellipse zones.txt hint needs 16 x 24 lines + 16 labels, and so does a rear-zones.txt
 #define UI_DRAW_BUDGET 500        // draw calls, any non-diagnostic frame with the built-in zones
 #define UI_DRAW_BUDGET_DIAG 1200  // diagnostic view, and any frame with a 16-zone zones.txt
 #define UI_HINT_ELLIPSE_SEGMENTS 24
@@ -49,9 +49,11 @@ typedef struct {
 	const Screen *screen;
 	const MirrorState *mirror;
 	const ZoneTable *zones;
+	const ZoneTable *rear_zones; // NULL or rear_owned == 0: no rear outlines
 	const SetupInfo *setup;
 	const StatsInput *stats;
 	const FrameTime *frame;
+	int rear_owned;        // RearTouch=Zones
 	int mirror_enabled;    // Mirror=On
 	int art_loaded;        // atlas present; when 0 no DRAW_SPRITE items are emitted
 } UiModel;

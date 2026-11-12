@@ -1,5 +1,5 @@
 // Prints the draw list of a named scenario as JSON, for tools/ui_preview.py (UI-SPEC.md 15.2).
-// Usage: plan_dump <scenario> [--zones FILE]    plan_dump --list
+// Usage: plan_dump <scenario> [--zones FILE] [--rear-zones FILE]    plan_dump --list
 // Every scenario is built from fixed models and a synthetic clock, so the output never changes.
 #include <stdint.h>
 #include <stdio.h>
@@ -72,7 +72,7 @@ static const PadSnapshot *snapshot(uint32_t buttons, uint8_t lx, uint8_t ly, uin
 
 static DrawList list;
 
-static void build_scenario(int id, const ZoneTable *zones, uint64_t *cost_out){
+static void build_scenario(int id, const ZoneTable *zones, const ZoneTable *rear_zones, uint64_t *cost_out){
 	Sim sim;
 	sim_init(&sim);
 	sim_run(&sim, 300 * 1000, 10 * 1000); // boot: SETUP fades in
@@ -111,6 +111,9 @@ static void build_scenario(int id, const ZoneTable *zones, uint64_t *cost_out){
 	stats.zones_owned = 1;
 	stats.zones_source = 0;
 	stats.zones_count = zones->count;
+	stats.rear_owned = 1;
+	stats.rear_source = 0;
+	stats.rear_count = rear_zones->count;
 	stats.mirror_enabled = 1;
 	stats.art_loaded = 1;
 
@@ -217,6 +220,8 @@ static void build_scenario(int id, const ZoneTable *zones, uint64_t *cost_out){
 	model.screen = &sim.s;
 	model.mirror = &mirror;
 	model.zones = zones;
+	model.rear_zones = rear_zones;
+	model.rear_owned = 1;
 	model.setup = &setup;
 	model.stats = &stats;
 	model.frame = &ft;
@@ -255,21 +260,42 @@ static void dump(const char *name, uint64_t cost){
 	printf("\n]}\n");
 }
 
+// Reads a zones file over *table; returns 0 on success, else the exit code
+static int load_zones_file(const char *path, ZoneTable *table){
+	FILE *f = fopen(path, "rb");
+	if (!f){
+		fprintf(stderr, "%s: cannot open\n", path);
+		return 1;
+	}
+	static char text[4096];
+	size_t len = fread(text, 1, sizeof(text) - 1, f);
+	fclose(f);
+	text[len] = 0;
+	if (zones_parse(text, table) < 0){
+		fprintf(stderr, "%s: invalid zones file (run zones_lint on it)\n", path);
+		return 1;
+	}
+	return 0;
+}
+
+#define USAGE "usage: plan_dump <scenario> [--zones FILE] [--rear-zones FILE] | plan_dump --list\n"
+
 int main(int argc, char **argv){
-	const char *name = NULL, *zones_file = NULL;
+	const char *name = NULL, *zones_file = NULL, *rear_file = NULL;
 	for (int i = 1; i < argc; i++){
 		if (strcmp(argv[i], "--list") == 0){
 			for (int k = 0; k < S_COUNT; k++) puts(scenarios[k].name);
 			return 0;
 		}else if (strcmp(argv[i], "--zones") == 0 && i + 1 < argc) zones_file = argv[++i];
+		else if (strcmp(argv[i], "--rear-zones") == 0 && i + 1 < argc) rear_file = argv[++i];
 		else if (!name && argv[i][0] != '-') name = argv[i];
 		else{
-			fprintf(stderr, "usage: plan_dump <scenario> [--zones FILE] | plan_dump --list\n");
+			fprintf(stderr, USAGE);
 			return 2;
 		}
 	}
 	if (!name){
-		fprintf(stderr, "usage: plan_dump <scenario> [--zones FILE] | plan_dump --list\n");
+		fprintf(stderr, USAGE);
 		return 2;
 	}
 	int id = -1;
@@ -279,26 +305,14 @@ int main(int argc, char **argv){
 		return 2;
 	}
 
-	static ZoneTable zones;
+	static ZoneTable zones, rear_zones;
 	zones_default(&zones);
-	if (zones_file){
-		FILE *f = fopen(zones_file, "rb");
-		if (!f){
-			fprintf(stderr, "%s: cannot open\n", zones_file);
-			return 1;
-		}
-		static char text[4096];
-		size_t len = fread(text, 1, sizeof(text) - 1, f);
-		fclose(f);
-		text[len] = 0;
-		if (zones_parse(text, &zones) < 0){
-			fprintf(stderr, "%s: invalid zones file (run zones_lint on it)\n", zones_file);
-			return 1;
-		}
-	}
+	zones_default_rear(&rear_zones);
+	if (zones_file && load_zones_file(zones_file, &zones)) return 1;
+	if (rear_file && load_zones_file(rear_file, &rear_zones)) return 1;
 
 	uint64_t cost = 0;
-	build_scenario(id, &zones, &cost);
+	build_scenario(id, &zones, &rear_zones, &cost);
 	dump(name, cost);
 	return 0;
 }

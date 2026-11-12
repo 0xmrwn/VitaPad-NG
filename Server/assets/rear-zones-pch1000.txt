@@ -1,0 +1,7 @@
+# Rear touch zones, the built-in table: the two inner columns are buttons, the outer parts (where the fingers rest) are dead.
+# Coordinates are touch units (1920x1088) as seen from the front, so x grows toward the player's right hand.
+# Copy to ux0:data/VitaPadNG/rear-zones.txt and restart the app.
+L1 rect 451 0 941 544
+L3 rect 451 544 941 1088
+R1 rect 979 0 1469 544
+R3 rect 979 544 1469 1088

@@ -48,6 +48,8 @@ typedef struct {
 } TapTracker;               // all-zero is valid
 
 void zones_default(ZoneTable *table);
+// Rear panel: two inner columns, four buttons. The outer parts, where the fingers rest, are dead (as seen from the front)
+void zones_default_rear(ZoneTable *table);
 // Parses zones.txt (section 4.4). Returns the zone count (>= 1) and fills *out, or -1 and leaves *out untouched.
 int zones_parse(const char *text, ZoneTable *out);
 // First zone containing (x, y) in table order, or -1

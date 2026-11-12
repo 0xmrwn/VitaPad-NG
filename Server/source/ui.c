@@ -35,6 +35,7 @@ static MirrorState mirror;
 static PadSnapshot snap;
 static ActivityRef activity_ref;
 static ZoneLatch latch;
+static ZoneLatch rear_latch;
 static TapTracker tap;
 static FrameTime frame_time;
 static SetupInfo setup;
@@ -76,11 +77,20 @@ void ui_update(const SceCtrlData *pad, const char *ip, int wifi_link, int batter
 	uint32_t zone_bits = zones_resolve(touchzones_table(), points, num, &latch, &new_contacts);
 	int stats_tap = zones_tap_update(&tap, touchzones_table(), points, num, now);
 
+	// The rear panel only feeds the picture's buttons: its contacts are not front contacts, so they
+	// neither re-arm the zone hint nor reach the stats tap detector
+	SceTouchData rear;
+	if (sceTouchPeek(SCE_TOUCH_PORT_BACK, &rear, 1) < 0) rear.reportNum = 0;
+	ZonePoint rear_points[ZONE_MAX_CONTACTS];
+	int rear_num = touchzones_rear_read(&rear, rear_points);
+	uint32_t rear_bits = zones_resolve(touchzones_rear_table(), rear_points, rear_num, &rear_latch, NULL);
+
 	// What the PC gets (same expression as the packet code), recomputed here so the input threads stay untouched
 	if (remap_menu_open) mirror_neutral(&snap);
 	else{
 		snap.buttons = remap_buttons(fast_apply(pad->buttons)) | ps_buttons();
 		if (usb_connection() != CONNECTION_WIFI || touchzones_owns_front()) snap.buttons |= zone_bits;
+		if (touchzones_owns_rear()) snap.buttons |= rear_bits;
 		snap.lx = pad->lx;
 		snap.ly = pad->ly;
 		snap.rx = pad->rx;
@@ -130,6 +140,9 @@ void ui_update(const SceCtrlData *pad, const char *ip, int wifi_link, int batter
 		stats_input.zones_owned = touchzones_owns_front();
 		stats_input.zones_source = touchzones_source();
 		stats_input.zones_count = touchzones_table()->count;
+		stats_input.rear_owned = touchzones_owns_rear();
+		stats_input.rear_source = touchzones_rear_source();
+		stats_input.rear_count = touchzones_rear_table()->count;
 		stats_input.mirror_enabled = mirror_enabled;
 		stats_input.art_loaded = art_loaded;
 	}
@@ -154,6 +167,8 @@ void ui_draw(void){
 	model.screen = &screen;
 	model.mirror = &mirror;
 	model.zones = touchzones_table();
+	model.rear_zones = touchzones_rear_table();
+	model.rear_owned = touchzones_owns_rear();
 	model.setup = &setup;
 	model.stats = &stats_input;
 	model.frame = &frame_time;

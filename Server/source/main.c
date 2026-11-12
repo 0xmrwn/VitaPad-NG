@@ -80,13 +80,13 @@ static void fill_touch(TouchPoint *out, const SceTouchReport *report, const SceT
 	out->reserved = 0;
 }
 
-static void fill_packet(PadPacket *pkg, ZoneLatch *latch){
+static void fill_packet(PadPacket *pkg, TouchLatches *latches){
 	SceCtrlData pad;
 	SceTouchData front, retro;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
 	// A failed read must not turn stack garbage into zone presses
 	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) memset(&front, 0, sizeof(front));
-	sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1);
+	if (sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1) < 0) memset(&retro, 0, sizeof(retro));
 	input_rate_poll(pad.timeStamp);
 	// While the remap menu is open the PC gets a neutral pad
 	if (remap_menu_open){
@@ -99,14 +99,17 @@ static void fill_packet(PadPacket *pkg, ZoneLatch *latch){
 	uint8_t flags = NO_INPUT;
 	if (touchzones_owns_front()){
 		// The Vita owns the front panel: zones become buttons and no touch reaches the PC
-		pkg->buttons |= touchzones_buttons(&front, latch);
+		pkg->buttons |= touchzones_buttons(&front, &latches->front);
 		pkg->tx = pkg->ty = 0;
 	}else{
 		pkg->tx = front.report[0].x;
 		pkg->ty = front.report[0].y;
 		if (front.reportNum > 0) flags += MOUSE_MOV;
 	}
-	if (retro.reportNum > 0){
+	if (touchzones_owns_rear()){
+		// The Vita owns the rear panel too: its zones become buttons and no click flag is set
+		pkg->buttons |= touchzones_rear_buttons(&retro, &latches->rear);
+	}else if (retro.reportNum > 0){
 		if (retro.report[0].x > 960) flags += RIGHT_CLICK;
 		else flags += LEFT_CLICK;
 	}
@@ -114,14 +117,14 @@ static void fill_packet(PadPacket *pkg, ZoneLatch *latch){
 }
 
 // Returns the timestamp of the buttons/sticks sample used
-static uint64_t fill_packet_v2(PadPacketV2 *pkg, ZoneLatch *latch){
+static uint64_t fill_packet_v2(PadPacketV2 *pkg, TouchLatches *latches){
 	SceCtrlData pad;
 	SceTouchData front, retro;
 	SceMotionSensorState motion;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
 	// A failed read must not turn stack garbage into zone presses
 	if (sceTouchPeek(SCE_TOUCH_PORT_FRONT, &front, 1) < 0) memset(&front, 0, sizeof(front));
-	sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1);
+	if (sceTouchPeek(SCE_TOUCH_PORT_BACK, &retro, 1) < 0) memset(&retro, 0, sizeof(retro));
 	memset(pkg, 0, sizeof(PadPacketV2));
 	pkg->timestamp = (uint32_t)sceKernelGetProcessTimeWide();
 	pkg->battery = battery;
@@ -138,9 +141,12 @@ static uint64_t fill_packet_v2(PadPacketV2 *pkg, ZoneLatch *latch){
 	if (touchzones_owns_front()){
 		// The Vita owns the front panel: zones become buttons and no point is sent (front_num stays 0
 		// from the memset), so no client setting can map them a second time
-		pkg->buttons |= touchzones_buttons(&front, latch);
+		pkg->buttons |= touchzones_buttons(&front, &latches->front);
 	}else pkg->front_num = front.reportNum > 2 ? 2 : front.reportNum;
-	pkg->rear_num = retro.reportNum > 2 ? 2 : retro.reportNum;
+	if (touchzones_owns_rear()){
+		// Same for the rear panel: rear_num stays 0, so the PC client cannot also read the touch as a touchpad contact
+		pkg->buttons |= touchzones_rear_buttons(&retro, &latches->rear);
+	}else pkg->rear_num = retro.reportNum > 2 ? 2 : retro.reportNum;
 	for (int i = 0; i < pkg->front_num; i++) fill_touch(&pkg->front[i], &front.report[i], &panel_info[SCE_TOUCH_PORT_FRONT]);
 	for (int i = 0; i < pkg->rear_num; i++) fill_touch(&pkg->rear[i], &retro.report[i], &panel_info[SCE_TOUCH_PORT_BACK]);
 	if (sceMotionGetSensorState(&motion, 1) == 0){
@@ -165,16 +171,17 @@ static void handle_client(int client){
 	char request[REQUEST_SIZE];
 	PadPacket pkg;
 	PadPacketV2 pkg_v2;
-	ZoneLatch latch;
-	zones_latch_reset(&latch);
+	TouchLatches latches;
+	zones_latch_reset(&latches.front);
+	zones_latch_reset(&latches.rear);
 	for (;;){
 		if (recv_all(client, request, REQUEST_SIZE) < 0) break;
 		int ret;
 		if (memcmp(request, REQUEST_V2, REQUEST_SIZE) == 0){
-			input_rate_poll(fill_packet_v2(&pkg_v2, &latch));
+			input_rate_poll(fill_packet_v2(&pkg_v2, &latches));
 			ret = send_all(client, &pkg_v2, sizeof(PadPacketV2));
 		}else{
-			fill_packet(&pkg, &latch);
+			fill_packet(&pkg, &latches);
 			ret = send_all(client, &pkg, sizeof(PadPacket));
 		}
 		if (ret < 0) break;
@@ -242,8 +249,9 @@ static int stream_thread(unsigned int args, void* argp){
 		memset(&last, 0, sizeof(last));
 		memset(&packet, 0, sizeof(packet));
 		memcpy(packet.magic, STREAM_MAGIC, 4);
-		ZoneLatch latch;
-		zones_latch_reset(&latch);
+		TouchLatches latches;
+		zones_latch_reset(&latches.front);
+		zones_latch_reset(&latches.rear);
 		for (;;){
 			// Hellos: who to stream to, and whether they still want it
 			SceNetSockaddrIn from;
@@ -269,7 +277,7 @@ static int stream_thread(unsigned int args, void* argp){
 			// Anything new? Buttons (fast buttons included), sticks, touch and motion all end up in the packet;
 			// the timestamp always changes so it isn't compared
 			PadPacketV2 pkg;
-			fill_packet_v2(&pkg, &latch);
+			fill_packet_v2(&pkg, &latches);
 			uint32_t timestamp = pkg.timestamp;
 			pkg.timestamp = last.timestamp;
 			int changed = memcmp(&pkg, &last, sizeof(pkg)) != 0;
